@@ -1,0 +1,41 @@
+Package: nbinomPlot
+Title: Plot negative binomial distributions interactively
+Version: 0.0.0.9000
+Authors@R: person('Zettsu', 'Tatsuya', email = 'zettsu.tatsuya@gmail.com', role = c('cre', 'aut'))
+Description: This is a Shiny app developed with the golem package to plot negative binomial distributions interactively.
+License: MIT + file LICENSE
+Imports: 
+    attempt,
+    config (>= 0.3.1),
+    DT,
+    gargoyle,
+    ggplot2,
+    globals,
+    glue,
+    golem (>= 0.3.1),
+    htmltools,
+    processx,
+    purrr,
+    R6,
+    readr,
+    rlang,
+    shinipsum,
+    shiny (>= 1.6.0),
+    shinyjs,
+    shinytest,
+    stringr,
+    thinkr,
+    tibble
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+URL: https://github.com/zettsu-t/nbinomPlot
+BugReports: https://github.com/zettsu-t/nbinomPlot/issues
+Suggests: 
+    rmarkdown,
+    knitr,
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Language: en-US
+VignetteBuilder: knitr

@@ -1,0 +1,11 @@
+default:
+  golem_name: nbinomPlot
+  golem_version: 0.0.0.9000
+  app_prod: no
+  initial_size: 4.0
+  initial_prob: 0.25
+  default_max_nbinom_size: 20
+production:
+  app_prod: yes
+dev:
+  golem_wd: !expr here::here()

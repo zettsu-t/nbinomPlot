@@ -1,0 +1,66 @@
+---
+title: "The back-end of nbinomPlot"
+author: "Zettsu Tatsuya"
+date: '`r format(Sys.time(), "%Y/%m/%d")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+  pdf_document:
+    latex_engine: xelatex
+  beamer_presentation:
+    pandoc_args:
+    - --latex-engine
+    - xelatex
+header-includes:
+  \usepackage{float}
+documentclass: bxjsarticle
+classoption: xelatex,ja=standard
+urlcolor: blue
+---
+
+```{r import_back_end, include = FALSE}
+library(ggplot2)
+library(tibble)
+library(rlang)
+library(R6)
+source("../R/utils_helpers.R")
+source("../R/fct_nbinom.R")
+```
+
+Negative binomial distribution functions in R take three parameters: size, prob and mu.
+
+```{r args_nbimom}
+args(dnbinom)
+```
+
+We specify two of the parameters and the rest one is derived from the two.
+
+```{r calculate_nbinom_mu_from_size_prob}
+calculate_nbinom_mu_from_size_prob(size = 4.0, prob = 0.25)
+calculate_nbinom_size_from_prob_mu(prob = 0.25, mu = 12.0)
+```
+
+Here is a density plot of a negative binomial distribution.
+
+```{r draw_nbinom_density}
+g <- draw_nbinom_density(size = 4.0, prob = 0.25, lower_quantile = 0.999)
+plot(g)
+```
+
+We wrap a negative binomial distribution in a R6 class.
+
+```{r wrapper_class_default}
+nb_dist <- NbinomDist$new(size = 1.0, prob = 0.5)
+lower_quantile <- 0.999
+nb_dist$draw(lower_quantile = lower_quantile)
+```
+
+and set parameters.
+
+```{r wrapper_class_with_params}
+nb_dist$set_size(size = 4.0)
+nb_dist$set_prob(prob = 0.25)
+nb_dist$draw(lower_quantile = lower_quantile)
+```
