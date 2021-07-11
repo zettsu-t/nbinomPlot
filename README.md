@@ -12,7 +12,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://travis-ci.com/zettsu-t/nbinomPlot.svg?branch=master)](https://travis-ci.com/zettsu-t/nbinomPlot)
 <!-- badges: end -->
 
-The goal of nbinomPlot is to …
+The goal of nbinomPlot is to show an example of how to build, test, and
+deploy a production-grade Shiny app.
 
 ## Installation
 
@@ -25,6 +26,6 @@ devtools::install_github("zettsu-t/nbinomPlot")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-## library(nbinomPlot)
-## run_app()
+library(nbinomPlot)
+run_app()
 ```
