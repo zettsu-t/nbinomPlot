@@ -28,6 +28,8 @@ usethis::use_package("shinipsum")
 usethis::use_package("shinyjs")
 usethis::use_package("shinytest")
 usethis::use_package("thinkr")
+usethis::use_package("rmarkdown")
+usethis::use_package("markdown")
 
 ## Add modules ----
 ## Create a module infrastructure in R/

@@ -14,11 +14,13 @@ Imports:
     glue,
     golem (>= 0.3.1),
     htmltools,
+    markdown,
     processx,
     purrr,
     R6,
     readr,
     rlang,
+    rmarkdown,
     shinipsum,
     shiny (>= 1.6.0),
     shinyjs,
@@ -32,7 +34,6 @@ RoxygenNote: 7.1.1
 URL: https://github.com/zettsu-t/nbinomPlot
 BugReports: https://github.com/zettsu-t/nbinomPlot/issues
 Suggests: 
-    rmarkdown,
     knitr,
     spelling,
     testthat (>= 3.0.0)
