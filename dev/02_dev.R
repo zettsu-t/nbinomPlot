@@ -30,6 +30,7 @@ usethis::use_package("shinytest")
 usethis::use_package("thinkr")
 usethis::use_package("rmarkdown")
 usethis::use_package("markdown")
+usethis::use_package("covr")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
@@ -100,7 +101,9 @@ covrpage::covrpage()
 # usethis::use_github()
 
 # GitHub Actions
-# usethis::use_github_action()
+# Run on a cloned working directory
+# usethis::use_github_actions()
+
 # Chose one of the three
 # See https://usethis.r-lib.org/reference/use_github_action.html
 # usethis::use_github_action_check_release()
@@ -110,8 +113,9 @@ covrpage::covrpage()
 # usethis::use_github_action_pr_commands()
 
 # Travis CI
-# usethis::use_travis()
-# usethis::use_travis_badge()
+# Use use_github_actions() instead of usethis::use_travis()
+# Run on a cloned working directory
+usethis::use_travis_badge()
 
 # AppVeyor
 # usethis::use_appveyor()
