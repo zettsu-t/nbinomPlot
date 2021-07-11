@@ -115,7 +115,7 @@ covrpage::covrpage()
 # Travis CI
 # Use use_github_actions() instead of usethis::use_travis()
 # Run on a cloned working directory
-usethis::use_travis_badge()
+# usethis::use_travis_badge()
 
 # AppVeyor
 # usethis::use_appveyor()
