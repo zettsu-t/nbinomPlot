@@ -21,9 +21,22 @@ devtools::install_github("zettsu-t/nbinomPlot")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example that shows you how to launch the nbinomPlot app:
 
 ``` r
 library(nbinomPlot)
 run_app()
 ```
+
+## Run on Shiny Server
+
+Build and run a Docker container with **Dockerfile\_shiny**
+
+``` bash
+docker build -f Dockerfile_shiny -t nbinom .
+docker run -t nbinom
+```
+
+and you can access the nbinomPlot app at
+<http://example.com:3838/nbinomPlot>. Note that you have to replace the
+URL with an actual server.

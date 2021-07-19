@@ -1,0 +1,252 @@
+---
+title: "How to make a Shiny app with the golem R package"
+author: "Zettsu Tatsuya"
+date: '`r format(Sys.time(), "%Y/%m/%d")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+  pdf_document:
+    latex_engine: xelatex
+  beamer_presentation:
+    pandoc_args:
+    - --latex-engine
+    - xelatex
+header-includes:
+  \usepackage{float}
+documentclass: bxjsarticle
+classoption: xelatex,ja=standard
+urlcolor: blue
+---
+
+```{r import_back_end, include = FALSE}
+library(ggplot2)
+library(tibble)
+library(rlang)
+library(R6)
+source("../R/utils_helpers.R")
+source("../R/fct_nbinom.R")
+```
+
+This is a tutorial to make a Shiny app with the R golem package: longer than [the official cheat sheet](https://thinkr.fr/golem_cheatsheet_V0.1.pdf) and shorter than [Engineering Production-Grade Shiny Apps](https://engineering-shiny.org/).
+
+## Setup a golem project
+
+### Make a GitHub repository
+
+Whether we push a Shiny app to GitHub or not, it is a good practice to make a Git repository that contains all files to build a Shiny app.
+
+If we want to publish a Shiny app on GitHub, create a Git repository on the GitHub website with its name and a short description.
+
+### Check out a repository
+
+After creating an empty Git repository, we clone the repository on our computer as below. Note that we have to replace this URL with an actual one.
+
+```{bash clone_repo, eval=FALSE}
+cd path/to/dir
+git clone https://github.com/zettsu-t/nbinomPlot.git
+```
+
+We can find nothing but **.git/** in an empty repository.
+
+### Create a golem project
+
+Install the golem package on R.
+
+```{r install_golem, eval=FALSE}
+install.packages("golem")
+```
+
+Create a golem project on RStudio in the following steps.
+
+1. Select File -> New Project
+1. Select 'New Project' in the dialog
+1. Select 'Package for Shiny App using golem'
+1. Fill 'Directory name' and 'Create project as subdirectory of'
+1. Push the Create Project button
+
+An initial file set for a Shiny app is created in the directory you designated above.
+
+### Copy created files to the git repository
+
+We copy all files __EXCEPT .git/__ (if it exists) in the fresh golem project to the cloned Git directory. After copying all files, we add and commit the files in this golem project.
+
+```{bash add_commit_repo, eval=FALSE}
+cd path/to/dir/nbinomPlot
+git add files and dirs
+git commit -a -m 'Initial commit'
+```
+
+Some files may be ever unused and we can remove them from the repository before you release the project.
+
+```{bash rm_from_repo, eval=FALSE}
+git rm filename
+```
+
+When you create files in this project, do not forget to add the files to the git repository.
+
+
+## Write a golem project
+
+### Fill a description
+
+What we do first is to fill items in __dev/01_start.R__. We can delete the line
+
+```{r use_git, eval=FALSE}
+usethis::use_git()
+```
+
+in __01_start.R__ since we have already created the git repository.
+
+Run __01_start.R__, and the golem package creates many files such as __LICENSE.md__ and updates __DESCRIPTION__ which reflects items in __01_start.R__. To do in RStudio, open __dev/01_start.R__ and hit Ctrl-Alt-R on RStudio to run it.
+
+You should not edit __DESCRIPTION__ by hand and you edit __01_start.R__ and run it again after editing.
+
+### Write a back-end
+
+Second, we write back-end logic scripts in test-driven development. In this project, __inst/nbinomPlot.Rmd__ describes how the back-end of nbinomPlot works.
+
+Here we write __R/fct_nbinom.R__ and __R/utils_helpers.R__ to implement the backend logic. Instead of creating these two files by hand, have the golem package create them. We add
+
+```{r add_back_end_files, eval=FALSE}
+golem::add_fct("nbinom")
+golem::add_utils("helpers")
+```
+
+to __dev/02_dev.R__ and run it, then __R/fct_nbinom.R__ and __R/utils_helpers.R__ are created. We similarly create their test files in __tests/testthat__.
+
+```{r add_tests, eval=FALSE}
+usethis::use_test("fct_nbinom")
+usethis::use_test("utils_helpers")
+```
+
+We have to list R packages that these R files import. We add the R packages in __dev/02_dev.R__ and run it. Do not edit __DESCRIBE__ by hand.
+
+```{r add_package, eval=FALSE}
+usethis::use_package("ggplot2")
+usethis::use_package("purrr")
+```
+
+After writing the back-end logic and its tests, we can run the tests as below.
+
+```{r test_back_end, eval=FALSE}
+library(devtools)
+devtools::test()
+```
+
+Now we can check this package in one command! In RStudio,
+
+1. Select the Build tab on the left-top pane.
+1. Push the "Check" button to run 'R CMD check'
+
+`R CMD check` tells us that explanation of some functions is missing. It is a way to make an R package to build perfect components one by one rather than write comments after writing all code. We should keep no errors and no warnings in developing an R package in any stage.
+
+R Markdown documents are useful to explain back-end logic with images and running code. Now we edit __inst/nbinomPlot.Rmd__, convert it to an HTML document, and check the HTML document. In RStudio, we can convert an R Markdown document with one click.
+
+1. Open inst/nbinomPlot.Rmd
+1. Push the Knit button
+
+### Create a mock UI
+
+Before connecting the front-end and back-end, we create UI modules as the front-end. To create a UI module and its test, we add lines below to __dev/02_dev.R__ and run it.
+
+```{r add_ui_module, eval=FALSE}
+golem::add_module(name = "size_var")  # Name of the module
+usethis::use_test("mod_size_var")
+```
+
+Actual plots are not ready yet and we use dummy plots that the shinipsum R package generates instead.
+
+```{r ipsum_plot, eval=FALSE}
+output$plot <- shiny::renderPlot({
+  shinipsum::random_ggplot() + ggplot2::labs(title = "Random plot")
+})
+```
+
+When we are ready to run mock UI modules, load and run all modules. It is important to get a tangible look and feel before connecting UI modules to the back-end.
+
+```{r run_mock, eval=FALSE}
+library(devtools)
+load_all(".")
+run_app()
+```
+
+
+## Write an application
+
+### Connect UI and Server modules
+
+There are three steps to connect UI modules (front-end) and Server modules (back-end) in a golem app.
+
+1. Wrap a back-end state as an R6 class. The facade pattern is useful to wrap complex logic.
+1. Have UI modules update the state and call _gargoyle::trigger()_ as producers.
+1. Have Server modules call _gargoyle::watch()_ as a subscriber, and plot charts and update inputs.
+
+### Add app tests using snapshots
+
+Whenever we change a module, we add tests for the module. This is the same way as creating the back-end logic.
+
+```{r, eval=FALSE}
+library(devtools)
+load_all(".")
+devtools::test()
+```
+
+After all modules and their tests are complete, we write app-tests with the shinytest R package and shinytest::ShinyDriver which simulates user actions like clicking mouse buttons and typing keys. Snapshots are used as the expected value of images and HTML elements.
+
+```{r skip_if_not_interactive, eval=FALSE}
+skip_if_not(interactive())
+```
+
+When we complete tests, we measure code coverage. Unlike gcov for C/C++, code coverage is not available for failed tests.
+
+```{r, eval=FALSE}
+covr::package_coverage()
+```
+
+Note that tests using shinytest::ShinyDriver fail in a non-interactive mode including `R CMD check` even if they pass on an-interactive mode `devtools::test()`. This reduces code coverage in tests.
+
+### Read configs
+
+Parameters in UI modules are hard-coded up until now. It is better parameters are customizable and we move them to a configuration file. The golem package has already created **golem-config.yml** and we can add key-value pairs to it.
+
+
+### Format R scripts
+
+To publish readable code, a code formatter comes in handy and the styler R package formats R code pretty. Note that code formatters do not change behaviors of code but it is still needed for us to compare and check the code is virtually unchanged before and after format it.
+
+```{r, eval=FALSE}
+library(styler)
+styler::style_dir(".")
+R CMD check
+```
+
+## Deploy an applications
+
+Third and last, deploy the Shiny app. Run __dev/03_deploy.R__ and check and build an R package. This includes tests that non-interactive environments skip as already described.
+
+We can build, check and install a Shiny app as an R package on CLI.
+
+```{bash, eval=FALSE}
+R CMD build nbinomPlot --no-manual --no-build-vignettes
+R CMD check nbinomPlot --no-manual --no-build-vignettes
+R CMD install nbinomPlot
+```
+
+__03_deploy.R__ writes __Dockerfile__. We can build and run a Docker container without any changes for generated Docker! If TCP 80 is not available for users on your OS, use -p 8080:80 instead of -p 80:80.
+
+```{bash, eval=FALSE}
+docker build -t nbinom .
+docker run -p 80:80 -t nbinom
+```
+
+Dockerfile_shiny which is in this repository launches Shiny Server and is based on the generated Dockerfile.
+
+## Bibliography
+
+|Title|Author(s)|Year|Website|
+|:--------------------------|:---------------------------------------------------------|:--------|:--------------------------|
+|R packages|Hadley Wickham|2015|http://r-pkgs.had.co.nz/|
+|Mastering Shiny|Hadley Wickham|2020|https://mastering-shiny.org/|
+|Engineering Production-Grade Shiny Apps|Colin Fay, Sébastien Rochette, Vincent Guyader and Cervan Girard|2021|https://engineering-shiny.org/|
