@@ -29,9 +29,9 @@ source("../R/utils_helpers.R")
 source("../R/fct_nbinom.R")
 ```
 
-This is a tutorial to make a Shiny app with the R golem package: longer than [the official cheat sheet](https://thinkr.fr/golem_cheatsheet_V0.1.pdf) and shorter than [Engineering Production-Grade Shiny Apps](https://engineering-shiny.org/).
+This is a tutorial to make a Shiny app with the golem R package: longer than [the official cheat sheet](https://thinkr.fr/golem_cheatsheet_V0.1.pdf) and shorter than [Engineering Production-Grade Shiny Apps](https://engineering-shiny.org/).
 
-## Setup a golem project
+## Create a golem project
 
 ### Make a GitHub repository
 
@@ -39,7 +39,7 @@ Whether we push a Shiny app to GitHub or not, it is a good practice to make a Gi
 
 If we want to publish a Shiny app on GitHub, create a Git repository on the GitHub website with its name and a short description.
 
-### Check out a repository
+### Check out a Git repository
 
 After creating an empty Git repository, we clone the repository on our computer as below. Note that we have to replace this URL with an actual one.
 
@@ -50,15 +50,15 @@ git clone https://github.com/zettsu-t/nbinomPlot.git
 
 We can find nothing but **.git/** in an empty repository.
 
-### Create a golem project
+### Create a new golem project
 
-Install the golem package on R.
+First of all, we install the golem package on R.
 
 ```{r install_golem, eval=FALSE}
 install.packages("golem")
 ```
 
-Create a golem project on RStudio in the following steps.
+We create a golem project on RStudio in the following steps.
 
 1. Select File -> New Project
 1. Select 'New Project' in the dialog
@@ -78,7 +78,7 @@ git add files and dirs
 git commit -a -m 'Initial commit'
 ```
 
-Some files may be ever unused and we can remove them from the repository before you release the project.
+Some files will be ever unused and we can remove them from the repository before you release the project.
 
 ```{bash rm_from_repo, eval=FALSE}
 git rm filename
@@ -87,9 +87,9 @@ git rm filename
 When you create files in this project, do not forget to add the files to the git repository.
 
 
-## Write a golem project
+## Set up a golem project
 
-### Fill a description
+### Fill descriptions
 
 What we do first is to fill items in __dev/01_start.R__. We can delete the line
 
@@ -105,7 +105,7 @@ You should not edit __DESCRIPTION__ by hand and you edit __01_start.R__ and run 
 
 ### Write a back-end
 
-Second, we write back-end logic scripts in test-driven development. In this project, __inst/nbinomPlot.Rmd__ describes how the back-end of nbinomPlot works.
+Second, we write back-end logic scripts in test-driven development. In this project, we create __inst/nbinomPlot.Rmd__, which describes how the back-end of nbinomPlot works.
 
 Here we write __R/fct_nbinom.R__ and __R/utils_helpers.R__ to implement the backend logic. Instead of creating these two files by hand, have the golem package create them. We add
 
@@ -140,9 +140,9 @@ Now we can check this package in one command! In RStudio,
 1. Select the Build tab on the left-top pane.
 1. Push the "Check" button to run 'R CMD check'
 
-`R CMD check` tells us that explanation of some functions is missing. It is a way to make an R package to build perfect components one by one rather than write comments after writing all code. We should keep no errors and no warnings in developing an R package in any stage.
+`R CMD check` tells us that explanation of some functions is missing. It is a way to make an R package to build perfect components one by one rather than write comments after writing all code. We should keep no errors and no warnings in developing an R package at any stage.
 
-R Markdown documents are useful to explain back-end logic with images and running code. Now we edit __inst/nbinomPlot.Rmd__, convert it to an HTML document, and check the HTML document. In RStudio, we can convert an R Markdown document with one click.
+R Markdown documents are useful to explain back-end logic with images and embedded running code. Now we edit __inst/nbinomPlot.Rmd__, convert it to an HTML document, and check the HTML document. In RStudio, we can convert an R Markdown document with one click.
 
 1. Open inst/nbinomPlot.Rmd
 1. Push the Knit button
@@ -173,7 +173,7 @@ run_app()
 ```
 
 
-## Write an application
+## Write a Shiny app
 
 ### Connect UI and Server modules
 
@@ -195,10 +195,6 @@ devtools::test()
 
 After all modules and their tests are complete, we write app-tests with the shinytest R package and shinytest::ShinyDriver which simulates user actions like clicking mouse buttons and typing keys. Snapshots are used as the expected value of images and HTML elements.
 
-```{r skip_if_not_interactive, eval=FALSE}
-skip_if_not(interactive())
-```
-
 When we complete tests, we measure code coverage. Unlike gcov for C/C++, code coverage is not available for failed tests.
 
 ```{r, eval=FALSE}
@@ -207,6 +203,10 @@ covr::package_coverage()
 
 Note that tests using shinytest::ShinyDriver fail in a non-interactive mode including `R CMD check` even if they pass on an-interactive mode `devtools::test()`. This reduces code coverage in tests.
 
+```{r skip_if_not_interactive, eval=FALSE}
+skip_if_not(interactive())
+```
+
 ### Read configs
 
 Parameters in UI modules are hard-coded up until now. It is better parameters are customizable and we move them to a configuration file. The golem package has already created **golem-config.yml** and we can add key-value pairs to it.
@@ -214,7 +214,7 @@ Parameters in UI modules are hard-coded up until now. It is better parameters ar
 
 ### Format R scripts
 
-To publish readable code, a code formatter comes in handy and the styler R package formats R code pretty. Note that code formatters do not change behaviors of code but it is still needed for us to compare and check the code is virtually unchanged before and after format it.
+To publish readable code, a code formatter comes in handy and the styler R package formats R code pretty. Note that code formatters do not change behaviors of code but it is still needed for us to check whether it is true.
 
 ```{r, eval=FALSE}
 library(styler)
@@ -222,7 +222,7 @@ styler::style_dir(".")
 R CMD check
 ```
 
-## Deploy an applications
+## Deploy a Shiny app
 
 Third and last, deploy the Shiny app. Run __dev/03_deploy.R__ and check and build an R package. This includes tests that non-interactive environments skip as already described.
 
