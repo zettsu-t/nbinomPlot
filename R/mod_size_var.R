@@ -18,7 +18,5 @@ mod_size_var_ui <- function(id) {
 #' @noRd
 mod_size_var_server <- function(id) {
   moduleServer(id, function(input, output, session) {
-    #   gargoyle::watch("update_size")
-    #   shiny::updateSliderInput(session, "size", value = nbinom_dist$get_size(), max = max_size)
   })
 }

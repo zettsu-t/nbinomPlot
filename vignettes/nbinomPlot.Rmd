@@ -19,5 +19,7 @@ library(nbinomPlot)
 ```
 
 ```{r run}
-run_app()
+if (interactive()) {
+   run_app()
+}
 ```

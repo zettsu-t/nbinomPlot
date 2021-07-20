@@ -50,8 +50,6 @@ mod_params_server <- function(id, nbinom_dist, default_max_nbinom_size) {
         mu_value <- as.numeric(input$mu)
         req(!is.na(mu_value))
         nbinom_dist$set_mu(mu_value)
-        size <- nbinom_dist$get_size()
-        max_size <- ceiling(max(default_max_nbinom_size, size))
       }
 
       gargoyle::trigger("render_plot")

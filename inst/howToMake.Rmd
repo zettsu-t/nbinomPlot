@@ -187,7 +187,7 @@ There are three steps to connect UI modules (front-end) and Server modules (back
 
 Whenever we change a module, we add tests for the module. This is the same way as creating the back-end logic.
 
-```{r, eval=FALSE}
+```{r devtools_test, eval=FALSE}
 library(devtools)
 load_all(".")
 devtools::test()
@@ -197,7 +197,7 @@ After all modules and their tests are complete, we write app-tests with the shin
 
 When we complete tests, we measure code coverage. Unlike gcov for C/C++, code coverage is not available for failed tests.
 
-```{r, eval=FALSE}
+```{r covr_package_coverage, eval=FALSE}
 covr::package_coverage()
 ```
 
@@ -216,10 +216,16 @@ Parameters in UI modules are hard-coded up until now. It is better parameters ar
 
 To publish readable code, a code formatter comes in handy and the styler R package formats R code pretty. Note that code formatters do not change behaviors of code but it is still needed for us to check whether it is true.
 
-```{r, eval=FALSE}
+```{r styler_style_dir, eval=FALSE}
 library(styler)
 styler::style_dir(".")
 R CMD check
+```
+
+After formatting the R code, we run the lintr R package to check adherence to a given style. __.lintr__ changes styles from the default.
+
+```{r print_out_json, echo=FALSE, comment=""}
+cat(xfun::read_utf8("../.lintr"), sep = "\n")
 ```
 
 ## Deploy a Shiny app
@@ -228,15 +234,21 @@ Third and last, deploy the Shiny app. Run __dev/03_deploy.R__ and check and buil
 
 We can build, check and install a Shiny app as an R package on CLI.
 
-```{bash, eval=FALSE}
+```{bash build_package, eval=FALSE}
 R CMD build nbinomPlot --no-manual --no-build-vignettes
 R CMD check nbinomPlot --no-manual --no-build-vignettes
 R CMD install nbinomPlot
 ```
 
+After installing the Shiny app package, we can launch the app in one call.
+
+```{r launch_shiny_app, eval=FALSE}
+nbinomPlot::run_app()
+```
+
 __03_deploy.R__ writes __Dockerfile__. We can build and run a Docker container without any changes for generated Docker! If TCP 80 is not available for users on your OS, use -p 8080:80 instead of -p 80:80.
 
-```{bash, eval=FALSE}
+```{bash docker_build, eval=FALSE}
 docker build -t nbinom .
 docker run -p 80:80 -t nbinom
 ```
