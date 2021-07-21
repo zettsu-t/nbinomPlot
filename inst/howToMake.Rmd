@@ -222,7 +222,14 @@ styler::style_dir(".")
 R CMD check
 ```
 
-After formatting the R code, we run the lintr R package to check adherence to a given style. __.lintr__ changes styles from the default.
+After formatting the R code, we run the lintr R package to check adherence to a given style.
+
+```{r lintr_style_dir, eval=FALSE}
+library(lintr)
+lintr::lint_package()
+```
+
+__.lintr__ changes styles from the default.
 
 ```{r print_out_json, echo=FALSE, comment=""}
 cat(xfun::read_utf8("../.lintr"), sep = "\n")
