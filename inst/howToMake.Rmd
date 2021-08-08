@@ -61,7 +61,7 @@ install.packages("golem")
 We create a golem project on RStudio in the following steps.
 
 1. Select File -> New Project
-1. Select 'New Project' in the dialog
+1. Select 'New Directory' in the dialog
 1. Select 'Package for Shiny App using golem'
 1. Fill 'Directory name' and 'Create project as subdirectory of'
 1. Push the Create Project button
@@ -180,7 +180,7 @@ run_app()
 There are three steps to connect UI modules (front-end) and Server modules (back-end) in a golem app.
 
 1. Wrap a back-end state as an R6 class. The facade pattern is useful to wrap complex logic.
-1. Have UI modules update the state and call _gargoyle::trigger()_ as producers.
+1. Have UI modules update the state and call _gargoyle::trigger()_ as publisher.
 1. Have Server modules call _gargoyle::watch()_ as a subscriber, and plot charts and update inputs.
 
 ### Add app tests using snapshots
@@ -229,7 +229,7 @@ library(lintr)
 lintr::lint_package()
 ```
 
-__.lintr__ changes styles from the default.
+__.lintr__ changes styles from the default. It allows us to write longer lines than the standard VGA text mode.
 
 ```{r print_out_json, echo=FALSE, comment=""}
 cat(xfun::read_utf8("../.lintr"), sep = "\n")
@@ -260,7 +260,7 @@ docker build -t nbinom .
 docker run -p 80:80 -t nbinom
 ```
 
-Dockerfile_shiny which is in this repository launches Shiny Server and is based on the generated Dockerfile.
+**Dockerfile_shiny** which is in this repository launches Shiny Server and is based on the generated Dockerfile.
 
 ## Bibliography
 

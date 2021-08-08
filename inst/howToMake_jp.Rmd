@@ -1,0 +1,264 @@
+---
+title: "Rのgolemパッケージを使ってShinyアプリを作る"
+author: "Zettsu Tatsuya"
+date: '`r format(Sys.time(), "%Y/%m/%d")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+  pdf_document:
+    latex_engine: xelatex
+  beamer_presentation:
+    pandoc_args:
+    - --latex-engine
+    - xelatex
+header-includes:
+  \usepackage{float}
+documentclass: bxjsarticle
+classoption: xelatex,ja=standard
+urlcolor: blue
+---
+
+```{r import_back_end, include = FALSE}
+library(ggplot2)
+library(tibble)
+library(rlang)
+library(R6)
+source("../R/utils_helpers.R")
+source("../R/fct_nbinom.R")
+```
+
+Rのgolemパッケージを使ってShinyアプリを作る方法を説明する。 [公式チートシート](https://thinkr.fr/golem_cheatsheet_V0.1.pdf) よりも長く、golemパッケージの作者による解説書 [Engineering Production-Grade Shiny Apps](https://engineering-shiny.org/) よりも短い。
+
+## golem プロジェクトを作る
+
+### GitHub レポジトリを作る
+
+Shiny アプリを GitHub で公開するかどうかはともかく、Shiny アプリに含めるすべてのファイルを一つのGitレポジトリにまとめるとよい。GitHub で公開するなら、GitHubのサイトでレポジトリを新規作成し、名前と簡単な説明をつける。
+
+### GitHub レポジトリをチェックアウトする
+
+GitHubのサイトでレポジトリを新規作成したら、以下のコマンドを実行して、手元のPCにレポジトリを clone する。PCのディレクトリ名と、レポジトリのURLは実際のものに置き換えること。
+
+```{bash clone_repo, eval=FALSE}
+cd path/to/dir
+git clone https://github.com/zettsu-t/nbinomPlot.git
+```
+
+手元のPCには、 **.git/** ディレクトリだけがあり、他にファイルは無いはずである。
+
+### golem プロジェクトを作る
+
+最初に、 R の golem パッケージをインストールする。
+
+```{r install_golem, eval=FALSE}
+install.packages("golem")
+```
+
+golem プロジェクトを作るには、RStudio で以下の順に実行する。
+
+1. File から、 New Project を選ぶ
+1. ダイアログが出るので、 New Directory を選ぶ
+1. Package for Shiny App using golem を選ぶ
+1. Directory name と Create project as subdirectory of を記入する
+1. Create Project ボタンを押す
+
+ここで指定したディレクトリに、 Shiny アプリ開発に必要なファイル一式が用意される。
+
+### Git レポジトリに作成したファイル一式をコピーする
+
+あらかじめ clone した Git レポジトリの working copy に、 golem プロジェクトの作成時に生成したファイル一式( **.git/ を除く** ) をコピーする。コピーしたファイルを下記の通り Git レポジトリにadd, commit して以後 Git で管理する。
+
+```{bash add_commit_repo, eval=FALSE}
+cd path/to/dir/nbinomPlot
+git add files and dirs
+git commit -a -m 'Initial commit'
+```
+
+golem プロジェクトの作成時に生成したファイルには、以後全く使わないファイルがあるかもしれないが、後から `git rm` で除外できるので今はそのままにしておく。
+
+```{bash rm_from_repo, eval=FALSE}
+git rm filename
+```
+
+これからShinyアプリを開発する過程で新たにファイルを作成するが、作成したファイルを `git add` で git レポジトリに追加するのを忘れないようにしよう。
+
+
+## golem プロジェクトを設定する
+
+### 記述欄を埋める
+
+最初に __dev/01_start.R__ を実行すると、golem プロジェクトを設定する準備ができる。Git レポジトリはもう設定したので、 __01_start.R__ を実行する前に以下の文を削除しよう。
+
+```{r use_git, eval=FALSE}
+usethis::use_git()
+```
+
+RStudio上で __01_start.R__ を開き、 Ctrl-Alt-R を押して __01_start.R__ を実行すると、ファイルがたくさん生成される。 __LICENSE.md__ and updates __DESCRIPTION__ には、__01_start.R__ の内容が反映される。
+
+__DESCRIPTION__ を直接編集してはならない。 __01_start.R__ を編集して再実行すると、 __DESCRIPTION__ に反映される。他のファイルも同様である。
+
+### バックエンドを書く
+
+次にバックエンドのShinyアプリと関係ない処理(logic) を TDD (test-driven development) で書く。当 nbinomPlot プロジェクトでは __inst/nbinomPlot.Rmd__ を作成しているが、これはlogicがどのようなものか説明する文書である。
+
+Logicの実装を、 __R/fct_nbinom.R__ と  __R/utils_helpers.R__ に書く。これらのファイルは直接生成せず、golemに作らせる。 __dev/02_dev.R__ に以下を追加して、
+
+```{r add_back_end_files, eval=FALSE}
+golem::add_fct("nbinom")
+golem::add_utils("helpers")
+```
+
+実行すると __R/fct_nbinom.R__ and __R/utils_helpers.R__ が生成される。同様にこれらのユニットテストを __tests/testthat__ に作成する。 __dev/02_dev.R__ に以下を追加して実行する。
+
+```{r add_tests, eval=FALSE}
+usethis::use_test("fct_nbinom")
+usethis::use_test("utils_helpers")
+```
+
+これらのファイルが使うRパッケージ群を列挙するには、 __dev/02_dev.R__ を実行する。 __DESCRIBE__ を直接編集してはならない。
+
+```{r add_package, eval=FALSE}
+usethis::use_package("ggplot2")
+usethis::use_package("purrr")
+```
+
+Logicとそのユニットテストが書けたら、以下の通りユニットテストを実行する。
+
+```{r test_back_end, eval=FALSE}
+library(devtools)
+devtools::test()
+```
+
+Rのパッケージでユニットテストがすべて合格することは、一コマンドで確認できる。さらに言うと RStudio では以下の通り行う。
+
+1. 左上にある Build を選ぶ
+1. Check をクリックすると、 `R CMD check` を実行する
+
+`R CMD check` はユニットテストを実行するだけでなく、関数の説明が抜けていることも指摘する。コードを一通り書いてからユニットテストを一通り書くのではなく、コードを書くたびにユニットテストを書いて実行しよう。そしていつでもユニットテストがすべて合格し、`R CMD check` がエラーも警告も出さない状態を保つのである。
+
+R Markdown 文書は、図と実行可能な埋め込みコードを用いて、logicの説明を記述するのに役立つ。 __inst/nbinomPlot.Rmd__ を編集してHTMLに変換し、説明通りlogicが動作していることを確認しよう。RStudioでは、1クリックでR Markdown 文書をHTMLに変換できる。
+
+1. inst/nbinomPlot.Rmd を開く
+1. Knit ボタンを押す
+
+### UIのモックを作る
+
+フロントエンドとバックエンドをつなぐ前に、フロントエンドであるUIモジュール群を先に作ろう。UIモジュールに対応するファイルは、logicと同様に __dev/02_dev.R__ に書いて実行するとできる。
+
+```{r add_ui_module, eval=FALSE}
+golem::add_module(name = "size_var")  # Name of the module
+usethis::use_test("mod_size_var")
+```
+
+表示する図はまだ用意できていないので、代わりに表示するそれらしい図を shinipsum パッケージに作らせる。
+
+```{r ipsum_plot, eval=FALSE}
+output$plot <- shiny::renderPlot({
+  shinipsum::random_ggplot() + ggplot2::labs(title = "Random plot")
+})
+```
+
+UIモジュール群が一通りそろったら、RStudioに読み込んで実行する。バックエンドを作る前に、実際に触れるUIがあることが重要である。
+
+```{r run_mock, eval=FALSE}
+library(devtools)
+load_all(".")
+run_app()
+```
+
+
+## Shinyアプリを作る
+
+### UIモジュールとServerモジュールをつなぐ
+
+golemを用いて開発するとき、UIモジュール(フロントエンド)とServerモジュール(バックエンド)をつなぐには、以下の手順を経る。
+
+1. バックエンドの状態を、R6クラスにまとめる。Logicが複雑なら、facadeパターンが使える
+1. UIモジュールはR6クラスにまとめた状態を更新し、 _gargoyle::trigger()_ を呼ぶ。 Publisher/Subscriber の publisher に当たる。
+1. Serverモジュールは _gargoyle::watch()_ を呼んで subscriber として状態の更新されたという通知を待ち、通知を受けたら描画したり入力を更新したりする
+
+### スナップショットを撮ってShinyアプリをテストする
+
+モジュールを追加変更したらテストしよう。やり方は logic と同じである。
+
+```{r devtools_test, eval=FALSE}
+library(devtools)
+load_all(".")
+devtools::test()
+```
+
+すべてのモジュールを記述してユニットテストも通ったら、Shinyアプリ全体のテストを作成する。そうするには shinytest パッケージと shinytest::ShinyDriver を使って、あたかもブラウザの画面をクリックしたりキー入力したかのようにふるまう。スナップショットは、HTML要素や画面が想定通りかどうか比較するために用いる。
+
+全部のテストが通ったらカバレッジを測定する。C/C++のgcovとは異なり、Rのcovrパッケージにでは失敗したテストがあるとカバレッジを得られない。
+
+```{r covr_package_coverage, eval=FALSE}
+covr::package_coverage()
+```
+
+注意点として、 shinytest::ShinyDriver によるテストは、インタラクティブモードでは成功するテストも非インタラクティブモードでは失敗する。 `R CMD check` でテストしたときも失敗してしまう。よって非インタラクティブモードでは実行しないように、以下のように記述する。カバレッジが減ってしまうのは仕方ない。
+
+```{r skip_if_not_interactive, eval=FALSE}
+skip_if_not(interactive())
+```
+
+### 設定ファイルを読む
+
+これまでパラメータはすべてコードに埋め込んできた。それよりもパラメータを設定ファイルに書いて、コードを変更することなく動作を変更できる方がいだろう。golem はすでに **golem-config.yml** を出力しているので活用する。YAML形式なので、キー:値のペアを記述する。
+
+### Rスクリプトを整形する
+
+公開するコードは読みやすくする必要があるので、 styler パッケージに整形させよう。styler パッケージのようなコード整形ツールは、コードの見た目は変えても動作は変えないが、動作が変わっていないかどうかを整形前後の差分を見て目視した方がよいだろう。
+
+```{r styler_style_dir, eval=FALSE}
+library(styler)
+styler::style_dir(".")
+R CMD check
+```
+
+コードを整形したら、 lintr パッケージを用いて、コードの見た目がよくない個所と、コードの書き方が良くない箇所を検出する。
+
+```{r lintr_style_dir, eval=FALSE}
+library(lintr)
+lintr::lint_package()
+```
+
+lintr のデフォルトの動作を、下記のように変更することができる。VGAの横80文字より長くてもよいだろう。
+
+```{r print_out_json, echo=FALSE, comment=""}
+cat(xfun::read_utf8("../.lintr"), sep = "\n")
+```
+
+## Shinyアプリをデプロイする
+
+最後に、作成したShinyアプリをデプロイする。 __dev/03_deploy.R__ を実行した後、作成した R パッケージを検査(check)してビルド(build)する。そうすると非インタラクティブなユニットテストも併せて実行する。コンソールからは以下のように実行する。
+
+```{bash build_package, eval=FALSE}
+R CMD build nbinomPlot --no-manual --no-build-vignettes
+R CMD check nbinomPlot --no-manual --no-build-vignettes
+R CMD install nbinomPlot
+```
+
+ShinyアプリをRパッケージとしてインストールしたら、Rでは以下の一行で起動する。
+
+```{r launch_shiny_app, eval=FALSE}
+nbinomPlot::run_app()
+```
+
+__03_deploy.R__ は __Dockerfile__ を出力する。素晴らしいことに、この  __Dockerfile__ を変更することなく使って、Dockerコンテナを作成できる! 以下ではホストOSの TCP 80 からゲストOSの TCP 80 に転送しているが、もしホストOSの TCP 80 を使えない場合は8080など他のポート番号に変更すること。
+
+```{bash docker_build, eval=FALSE}
+docker build -t nbinom .
+docker run -p 80:80 -t nbinom
+```
+
+golemが生成した Dockerfile を基に作成した当パッケージの __Dockerfile_shiny__ は、Shiny Serverを起動してShinyアプリを起動するDockerコンテナを作成する。
+
+## 参考文献
+
+|書名|著者|発行年|サイト|
+|:--------------------------|:---------------------------------------------------------|:--------|:--------------------------|
+|R packages|Hadley Wickham|2015|http://r-pkgs.had.co.nz/|
+|Mastering Shiny|Hadley Wickham|2020|https://mastering-shiny.org/|
+|Engineering Production-Grade Shiny Apps|Colin Fay, Sébastien Rochette, Vincent Guyader and Cervan Girard|2021|https://engineering-shiny.org/|
