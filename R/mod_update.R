@@ -8,7 +8,9 @@
 #'
 #' @importFrom shiny NS tagList
 mod_update_ui <- function(id) {
-  shiny::actionButton(NS(id, "update"), "Update parameters")
+  tagList(
+    shiny::actionButton(NS(id, "update"), "Update parameters")
+  )
 }
 
 #' update Server Functions

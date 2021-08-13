@@ -8,8 +8,10 @@
 #'
 #' @importFrom shiny NS tagList
 mod_size_var_ui <- function(id) {
-  shiny::sliderInput(shiny::NS(id, "size"), "Size Paramater",
-    min = 0.2, max = 10, value = 1.0
+  tagList(
+    shiny::sliderInput(shiny::NS(id, "size"), "Size Paramater",
+      min = 0.2, max = 10, value = 1.0
+    )
   )
 }
 

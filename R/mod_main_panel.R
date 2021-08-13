@@ -8,7 +8,9 @@
 #'
 #' @importFrom shiny NS tagList
 mod_main_panel_ui <- function(id) {
-  shiny::plotOutput(shiny::NS(id, "plot"))
+  tagList(
+    shiny::plotOutput(shiny::NS(id, "plot"))
+  )
 }
 
 #' main_panel Server Functions

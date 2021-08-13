@@ -180,8 +180,8 @@ run_app()
 There are three steps to connect UI modules (front-end) and Server modules (back-end) in a golem app.
 
 1. Wrap a back-end state as an R6 class. The facade pattern is useful to wrap complex logic.
-1. Have UI modules update the state and call _gargoyle::trigger()_ as publisher.
-1. Have Server modules call _gargoyle::watch()_ as a subscriber, and plot charts and update inputs.
+1. Have UI modules update the state and call _gargoyle::trigger()_ as publishers.
+1. Have Server modules call _gargoyle::watch()_ as subscribers, and plot charts and update inputs.
 
 ### Add app tests using snapshots
 

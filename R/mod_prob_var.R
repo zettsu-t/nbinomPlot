@@ -8,8 +8,10 @@
 #'
 #' @importFrom shiny NS tagList
 mod_prob_var_ui <- function(id) {
-  shiny::sliderInput(shiny::NS(id, "prob"), "Prob Paramater",
-    min = 0.01, max = 1.0, value = 0.5
+  tagList(
+    shiny::sliderInput(shiny::NS(id, "prob"), "Prob Paramater",
+      min = 0.01, max = 1.0, value = 0.5
+    )
   )
 }
 

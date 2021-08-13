@@ -12,8 +12,8 @@ mod_nbinom_ui <- function(id) {
     shinyjs::useShinyjs(),
     shiny::titlePanel("Negative Binomial Distribution"),
     shiny::sidebarLayout(
-      mod_params_ui("nbplot"),
-      shiny::mainPanel(mod_main_panel_ui("nbplot"))
+      mod_params_ui(id),
+      shiny::mainPanel(mod_main_panel_ui(id))
     )
   )
 }
@@ -22,8 +22,8 @@ mod_nbinom_ui <- function(id) {
 #'
 #' @noRd
 mod_nbinom_server <- function(id, nbinom_dist, default_max_nbinom_size) {
-  mod_params_server("nbplot", nbinom_dist, default_max_nbinom_size)
-  mod_main_panel_server("nbplot",
+  mod_params_server(id, nbinom_dist, default_max_nbinom_size)
+  mod_main_panel_server(id,
     nbinom_dist = nbinom_dist,
     default_max_nbinom_size = default_max_nbinom_size
   )

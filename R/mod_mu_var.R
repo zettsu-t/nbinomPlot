@@ -8,9 +8,11 @@
 #'
 #' @importFrom shiny NS tagList
 mod_mu_var_ui <- function(id) {
-  shiny::textInput(shiny::NS(id, "mu"),
-    "Mu Paramater",
-    value = "1.0"
+  tagList(
+    shiny::textInput(shiny::NS(id, "mu"),
+      "Mu Paramater",
+      value = "1.0"
+    )
   )
 }
 

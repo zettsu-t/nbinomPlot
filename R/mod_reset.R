@@ -8,7 +8,9 @@
 #'
 #' @importFrom shiny NS tagList
 mod_reset_ui <- function(id) {
-  shiny::actionButton(shiny::NS(id, "reset"), "Reset parameters")
+  tagList(
+    shiny::actionButton(shiny::NS(id, "reset"), "Reset parameters")
+  )
 }
 
 #' reset Server Functions

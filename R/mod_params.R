@@ -8,14 +8,16 @@
 #'
 #' @importFrom shiny NS tagList
 mod_params_ui <- function(id) {
-  shiny::sidebarPanel(
-    mod_size_var_ui("nbplot"),
-    mod_prob_var_ui("nbplot"),
-    mod_mu_var_ui("nbplot"),
-    mod_fix_size_mu_ui("nbplot"),
-    mod_update_ui("nbplot"),
-    mod_quantile_var_ui("nbplot"),
-    mod_reset_ui("nbplot")
+  tagList(
+    shiny::sidebarPanel(
+      mod_size_var_ui(id),
+      mod_prob_var_ui(id),
+      mod_mu_var_ui(id),
+      mod_fix_size_mu_ui(id),
+      mod_update_ui(id),
+      mod_quantile_var_ui(id),
+      mod_reset_ui(id)
+    )
   )
 }
 
