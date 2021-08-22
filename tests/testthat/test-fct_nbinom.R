@@ -12,6 +12,27 @@ test_that("calculate_nbinom_size_from_prob_mu", {
   expect_equal(object = calculate_nbinom_size_from_prob_mu(prob = 0.75, mu = 2.0), expected = 6.0, tolerance = tolerance)
 })
 
+test_that("calculate_nbinom_density", {
+  tolerance <- 1e-7
+  expected <- c(0.31640625, 0.31640625, 0.19775391, 0.09887695, 0.04325867, 0.01730347)
+
+  df_actual <- calculate_nbinom_density(size = 4, prob = 0.75, lower_quantile = 0.99)
+  expect_equal(object = NROW(df_actual), expected = NROW(expected))
+  expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
+  expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
+})
+
+test_that("get_nbinom_density_dataframe", {
+  tolerance <- 1e-7
+  expected <- c(0.272490525, 0.326988630, 0.220717325, 0.110358663,
+                0.045522948, 0.016388261, 0.005326185, 0.001597855)
+
+  df_actual <- get_nbinom_density_dataframe(size = 8, prob = 0.85, lower_quantile = 0.999)
+  expect_equal(object = NROW(df_actual), expected = NROW(expected))
+  expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
+  expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
+})
+
 test_that("Initialize NbinomDist and reset", {
   tolerance <- 1e-7
   size_initial <- 4.0
@@ -152,6 +173,21 @@ test_that("NbinomDist reset and update the size parameter", {
 
 test_that("draw_nbinom_density", {
   expect_s3_class(draw_nbinom_density(size = 4.0, prob = 0.25, lower_quantile = 0.999), "gg")
+})
+
+test_that("get_density_dataframe", {
+  tolerance <- 1e-7
+  size_initial <- 4
+  prob_initial <- 0.75
+  lower_quantile <- 0.99
+  nb_dist <- NbinomDist$new(size_initial, prob_initial)
+
+  df_actual <- nb_dist$get_dataframe(lower_quantile)
+  expected <- c(0.31640625, 0.31640625, 0.19775391, 0.09887695, 0.04325867, 0.01730347)
+
+  expect_equal(object = NROW(df_actual), expected = NROW(expected))
+  expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
+  expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
 })
 
 test_that("read_config_parameters", {

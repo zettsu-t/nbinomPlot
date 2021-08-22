@@ -16,6 +16,19 @@ calculate_nbinom_size_from_prob_mu <- function(prob, mu) {
   mu * prob / (1 - prob)
 }
 
+#' Calculate densities of a negative binomial distribution
+#'
+#' @param size The size parameter of a negative binomial distribution
+#' @param prob The prob parameter of a negative binomial distribution
+#' @param lower_quantile Coverage of quantile of a distribution
+#' @return A data frame of the densities of the negative binomial distribution
+calculate_nbinom_density <- function(size, prob, lower_quantile) {
+  limit <- stats::qnbinom(lower_quantile, size, prob)
+  xs <- seq(from = 0, to = limit, by = 1)
+  ys <- stats::dnbinom(xs, size = size, prob = prob)
+  tibble::tibble(x = xs, density = ys)
+}
+
 #' Draw a density plot of a negative binomial distribution
 #'
 #' @param size The size parameter of a negative binomial distribution
@@ -23,14 +36,21 @@ calculate_nbinom_size_from_prob_mu <- function(prob, mu) {
 #' @param lower_quantile Coverage of quantile of a distribution
 #' @return A drawable object to pass to plot()
 draw_nbinom_density <- function(size, prob, lower_quantile) {
-  limit <- stats::qnbinom(lower_quantile, size, prob)
-  xs <- seq(from = 0, to = limit, by = 1)
-  ys <- stats::dnbinom(xs, size = size, prob = prob)
-
-  df <- tibble::tibble(x = xs, density = ys)
+  df <- calculate_nbinom_density(size, prob, lower_quantile)
   g <- ggplot2::ggplot(df)
   g <- g + ggplot2::geom_line(ggplot2::aes(x = .data$x, y = .data$density))
   g
+}
+
+#' Calculate densities of a negative binomial distribution
+#'
+#' @param size The size parameter of a negative binomial distribution
+#' @param prob The prob parameter of a negative binomial distribution
+#' @param lower_quantile Coverage of quantile of a distribution
+#' @return A data frame of the densities of the negative binomial distribution
+get_nbinom_density_dataframe <- function(size, prob, lower_quantile) {
+  ## Share with draw_nbinom_density()
+  calculate_nbinom_density(size, prob, lower_quantile)
 }
 
 #' Get the default size parameter of negative binomial distributions
@@ -126,6 +146,13 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #' @return A drawable object to pass to plot()
     draw = function(lower_quantile) {
       draw_nbinom_density(private$size, private$prob, lower_quantile = lower_quantile)
+    },
+
+    #' @description Get a data frame to plot
+    #'
+    #' @return A data frame to plot
+    get_dataframe = function(lower_quantile) {
+      get_nbinom_density_dataframe(private$size, private$prob, lower_quantile = lower_quantile)
     }
   ),
   private = list(

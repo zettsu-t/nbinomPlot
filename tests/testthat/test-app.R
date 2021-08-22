@@ -133,3 +133,59 @@ test_that("App", {
 
   app$stop()
 })
+
+test_that("Download", {
+  skip_if_not(interactive())
+
+  app <- shinytest::ShinyDriver$new(run_app())
+  app$waitForShiny()
+  app$click(NS("nbplot", "update"))
+  app$waitForShiny()
+  app$setValue(NS("nbplot", "fix"), "size")
+  app$waitForShiny()
+
+  set_and_download <- function(size, prob, quantile, expected) {
+    app$setValue(NS("nbplot", "quantile"), quantile)
+    app$waitForShiny()
+    app$setValue(NS("nbplot", "size"), size)
+    app$waitForShiny()
+    app$setValue(NS("nbplot", "prob"), prob)
+    app$waitForShiny()
+    app$click(NS("nbplot", "update"))
+    app$waitForShiny()
+
+    suffix <- stringr::str_replace_all(paste0(size, prob, quantile), "\\D", "_")
+    download_filename <- paste0("testout", suffix, ".csv")
+
+    download_top_dir <- file.path(app$getAppDir(), "tests")
+    dir.create(download_top_dir, showWarnings = FALSE)
+    download_dir <- file.path(download_top_dir, "snapshot-current")
+    dir.create(download_dir, showWarnings = FALSE)
+
+    app$snapshotDownload(NS("nbplot", "download"), download_filename)
+    actual_filename <- file.path(download_dir, download_filename)
+    df_actual <- readr::read_csv(actual_filename)
+
+    tolerance <- 1e-7
+    expect_equal(object = NROW(df_actual), NROW(expected))
+    expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
+    expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
+  }
+
+  size_first <- 4
+  prob_first <- 0.75
+  quantile_first <- 0.99
+  expected_first <- c(0.31640625, 0.31640625, 0.19775391, 0.09887695, 0.04325867, 0.01730347)
+  set_and_download(size = size_first, prob = prob_first, quantile = quantile_first,
+                   expected = expected_first)
+
+  size_second <- 8
+  prob_second <- 0.85
+  quantile_second <- 0.999
+  expected_second <- c(0.272490525, 0.326988630, 0.220717325, 0.110358663,
+                       0.045522948, 0.016388261, 0.005326185, 0.001597855)
+  set_and_download(size = size_second, prob = prob_second, quantile = quantile_second,
+                   expected = expected_second)
+
+  app$stop()
+})

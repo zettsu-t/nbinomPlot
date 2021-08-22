@@ -9,7 +9,8 @@
 #' @importFrom shiny NS tagList
 mod_main_panel_ui <- function(id) {
   tagList(
-    shiny::plotOutput(shiny::NS(id, "plot"))
+    shiny::plotOutput(shiny::NS(id, "plot")),
+    shiny::downloadButton(shiny::NS(id, "download"), label = "Download")
   )
 }
 
@@ -40,5 +41,18 @@ mod_main_panel_server <- function(id, nbinom_dist, default_max_nbinom_size) {
       shiny::updateSliderInput(session, "size", value = size, max = max_size)
       nbinom_dist$draw(quantile_value)
     })
+
+    output$download <- shiny::downloadHandler(
+      filename = function() {
+        "dist.csv"
+      },
+      content = function(file) {
+        quantile_value <- as.numeric(input$quantile)
+        req(!is.na(quantile_value))
+
+        df <- nbinom_dist$get_dataframe(quantile_value)
+        readr::write_csv(df, file)
+      }
+    )
   })
 }
