@@ -19,9 +19,6 @@ mod_main_panel_ui <- function(id) {
 #' @noRd
 mod_main_panel_server <- function(id, nbinom_dist, default_max_nbinom_size) {
   moduleServer(id, function(input, output, session) {
-    observeEvent(input$fix, {
-    })
-
     output$plot <- shiny::renderPlot({
       gargoyle::watch("render_plot")
 

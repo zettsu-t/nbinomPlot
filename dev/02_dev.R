@@ -31,6 +31,9 @@ usethis::use_package("thinkr")
 usethis::use_package("rmarkdown")
 usethis::use_package("markdown")
 usethis::use_package("covr")
+usethis::use_package("base64enc", "Suggests")
+usethis::use_package("magick", "Suggests")
+usethis::use_package("png", "Suggests")
 
 ## Add modules ----
 ## Create a module infrastructure in R/

@@ -8,8 +8,8 @@
 #'
 #' @importFrom shiny NS tagList
 mod_fix_size_mu_ui <- function(id) {
-  tagList(
-    radioButtons(shiny::NS(id, "fix"),
+  shiny::tagList(
+    shiny::radioButtons(shiny::NS(id, "fix"),
       label = "Fix", choices = c("size", "mu"), selected = "size"
     )
   )

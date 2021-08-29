@@ -145,6 +145,7 @@ test_that("Download", {
   app$waitForShiny()
 
   set_and_download <- function(size, prob, quantile, expected) {
+
     app$setValue(NS("nbplot", "quantile"), quantile)
     app$waitForShiny()
     app$setValue(NS("nbplot", "size"), size)
@@ -159,7 +160,7 @@ test_that("Download", {
 
     download_top_dir <- file.path(app$getAppDir(), "tests")
     dir.create(download_top_dir, showWarnings = FALSE)
-    download_dir <- file.path(download_top_dir, "snapshot-current")
+    download_dir <- file.path(app$getAppDir(), "tests", "snapshot-current")
     dir.create(download_dir, showWarnings = FALSE)
 
     app$snapshotDownload(NS("nbplot", "download"), download_filename)
