@@ -1,13 +1,15 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
-dev_history.R
 ^dev$
-$run_dev.*
+run_dev.*
 ^LICENSE\.md$
 ^README\.Rmd$
 ^CODE_OF_CONDUCT\.md$
 ^doc$
 ^Dockerfile$
+^Dockerfile_shiny$
 ^\.dockerignore$
 ^\.github$
+^\.lintr$
+^\.travis\.yml$

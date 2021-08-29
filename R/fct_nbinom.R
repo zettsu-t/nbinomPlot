@@ -35,6 +35,7 @@ calculate_nbinom_density <- function(size, prob, lower_quantile) {
 #' @param prob The prob parameter of a negative binomial distribution
 #' @param lower_quantile Coverage of quantile of a distribution
 #' @return A drawable object to pass to plot()
+#' @importFrom rlang .data
 draw_nbinom_density <- function(size, prob, lower_quantile) {
   df <- calculate_nbinom_density(size, prob, lower_quantile)
   g <- ggplot2::ggplot(df)
