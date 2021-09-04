@@ -170,6 +170,7 @@ load_all(".")
 run_app()
 ```
 
+RStudio上で __dev/run_dev.R__ を開き、 Ctrl-Alt-R を押して __run_dev.R__ を実行すると、関数の説明と __NAMESPACE__ を更新してから、パッケージをロードして _run_app()_ でShinyアプリを起動する。
 
 ## Shinyアプリを作る
 

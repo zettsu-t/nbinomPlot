@@ -172,6 +172,7 @@ load_all(".")
 run_app()
 ```
 
+__dev/run_dev.R__ comes in handy to do above. Open __dev/run_dev.R__ and hit Ctrl-Alt-R on RStudio to run it. It updates manuals and  __NAMESPACE__, reloads the package, and launches the Shiny app by _run_app()_.
 
 ## Write a Shiny app
 

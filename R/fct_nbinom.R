@@ -2,7 +2,7 @@
 #'
 #' @param size The size parameter of a negative binomial distribution
 #' @param prob The prob parameter of a negative binomial distribution
-#' @return The mu based ont the input size and prob
+#' @return The mu based on the input size and prob
 calculate_nbinom_mu_from_size_prob <- function(size, prob) {
   size * (1 - prob) / prob
 }
@@ -75,7 +75,7 @@ NbinomDist <- R6::R6Class("NbinomDist",
   public = list(
     #' @description Initialize and set default parameters
     #'
-    #' @param size The size parameter whicn must be a positive number
+    #' @param size The size parameter which must be a positive number
     #' @param prob The prob parameter which must be positive and lower than 1.0
     initialize = function(size, prob) {
       initial_size <- ifelse(private$is_valid_size(size), size, get_default_nbinom_size())
@@ -88,7 +88,7 @@ NbinomDist <- R6::R6Class("NbinomDist",
 
     #' @description Set the size parameter of this negative binomial distribution
     #'
-    #' @param size The size parameter whicn must be a positive number
+    #' @param size The size parameter which must be a positive number
     set_size = function(size) {
       if (private$is_valid_size(size)) {
         private$size <- size
@@ -151,6 +151,7 @@ NbinomDist <- R6::R6Class("NbinomDist",
 
     #' @description Get a data frame to plot
     #'
+    #' @param lower_quantile Coverage of quantile of this distribution
     #' @return A data frame to plot
     get_dataframe = function(lower_quantile) {
       get_nbinom_density_dataframe(private$size, private$prob, lower_quantile = lower_quantile)
