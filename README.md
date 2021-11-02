@@ -13,6 +13,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 The goal of nbinomPlot is to show an example of how to build, test, and
 deploy a production-grade Shiny app.
 
+![Sample Page](man/images/initital_screen.png)
+
 ## Installation
 
 ``` r
@@ -30,7 +32,7 @@ run_app()
 
 ## Run on Shiny Server
 
-Build and run a Docker container with **Dockerfile\_shiny**
+Build and run a Docker container with **Dockerfile_shiny**
 
 ``` bash
 docker build -f Dockerfile_shiny -t nbinom .
