@@ -12,22 +12,46 @@ test_that("calculate_nbinom_size_from_prob_mu", {
   expect_equal(object = calculate_nbinom_size_from_prob_mu(prob = 0.75, mu = 2.0), expected = 6.0, tolerance = tolerance)
 })
 
-test_that("calculate_nbinom_density", {
+test_that("calculate_nbinom_density_int", {
   tolerance <- 1e-7
   expected <- c(0.31640625, 0.31640625, 0.19775391, 0.09887695, 0.04325867, 0.01730347)
 
-  df_actual <- calculate_nbinom_density(size = 4, prob = 0.75, lower_quantile = 0.99)
+  df_actual <- calculate_nbinom_density(size = 4, prob = 0.75, lower_quantile = 0.99, step = 1.0)
   expect_equal(object = NROW(df_actual), expected = NROW(expected))
   expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
   expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
 })
 
-test_that("get_nbinom_density_dataframe", {
+test_that("calculate_nbinom_density_fine", {
+  tolerance <- 1e-7
+  expected <- c(0.31640625, 0.34606934, 0.31640625, 0.25955200, 0.19775391, 0.14275360,
+                0.09887695, 0.06627846, 0.04325867, 0.02761602, 0.01730347)
+
+  df_actual <- calculate_nbinom_density(size = 4, prob = 0.75, lower_quantile = 0.99, step = 0.5)
+  expect_equal(object = NROW(df_actual), expected = NROW(expected))
+  expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
+  expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
+})
+
+test_that("get_nbinom_density_dataframe_int", {
   tolerance <- 1e-7
   expected <- c(0.272490525, 0.326988630, 0.220717325, 0.110358663,
                 0.045522948, 0.016388261, 0.005326185, 0.001597855)
 
-  df_actual <- get_nbinom_density_dataframe(size = 8, prob = 0.85, lower_quantile = 0.999)
+  df_actual <- get_nbinom_density_dataframe(size = 8, prob = 0.85,
+                                            lower_quantile = 0.999, step = 1.0)
+  expect_equal(object = NROW(df_actual), expected = NROW(expected))
+  expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
+  expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
+})
+
+test_that("get_nbinom_density_dataframe_fine", {
+  tolerance <- 1e-7
+  expected <- c(0.272490525, 0.336014682, 0.281860722, 0.189832909, 0.110358663,
+                0.057630336, 0.027713955, 0.012480333, 0.005326185, 0.002173254)
+
+  df_actual <- get_nbinom_density_dataframe(size = 8, prob = 0.85,
+                                            lower_quantile = 0.999, step = 0.75)
   expect_equal(object = NROW(df_actual), expected = NROW(expected))
   expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
   expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
@@ -172,7 +196,8 @@ test_that("NbinomDist reset and update the size parameter", {
 })
 
 test_that("draw_nbinom_density", {
-  expect_s3_class(draw_nbinom_density(size = 4.0, prob = 0.25, lower_quantile = 0.999), "gg")
+  expect_s3_class(draw_nbinom_density(size = 4.0, prob = 0.25,
+                                      lower_quantile = 0.999, step = 1.0), "gg")
 })
 
 test_that("get_density_dataframe", {

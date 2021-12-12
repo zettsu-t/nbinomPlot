@@ -4,7 +4,7 @@
 \alias{get_nbinom_density_dataframe}
 \title{Calculate densities of a negative binomial distribution}
 \usage{
-get_nbinom_density_dataframe(size, prob, lower_quantile)
+get_nbinom_density_dataframe(size, prob, lower_quantile, step)
 }
 \arguments{
 \item{size}{The size parameter of a negative binomial distribution}
@@ -12,6 +12,8 @@ get_nbinom_density_dataframe(size, prob, lower_quantile)
 \item{prob}{The prob parameter of a negative binomial distribution}
 
 \item{lower_quantile}{Coverage of quantile of a distribution}
+
+\item{step}{The step of vector of quantiles}
 }
 \value{
 A data frame of the densities of the negative binomial distribution

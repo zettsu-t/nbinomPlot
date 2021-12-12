@@ -21,12 +21,18 @@ calculate_nbinom_size_from_prob_mu <- function(prob, mu) {
 #' @param size The size parameter of a negative binomial distribution
 #' @param prob The prob parameter of a negative binomial distribution
 #' @param lower_quantile Coverage of quantile of a distribution
+#' @param step The step of vector of quantiles
 #' @return A data frame of the densities of the negative binomial distribution
-calculate_nbinom_density <- function(size, prob, lower_quantile) {
-  limit <- stats::qnbinom(lower_quantile, size, prob)
-  xs <- seq(from = 0, to = limit, by = 1)
-  ys <- stats::dnbinom(xs, size = size, prob = prob)
-  tibble::tibble(x = xs, density = ys)
+calculate_nbinom_density <- function(size, prob, lower_quantile, step) {
+  if (step == 1.0) {
+    limit <- stats::qnbinom(lower_quantile, size, prob)
+    xs <- seq(from = 0, to = limit, by = 1)
+    ys <- stats::dnbinom(xs, size = size, prob = prob)
+    tibble::tibble(x = xs, density = ys)
+  } else {
+    calculate_nbinom_density_cpp(size = size, prob = prob,
+                                 lower_quantile = lower_quantile, step = step)
+  }
 }
 
 #' Draw a density plot of a negative binomial distribution
@@ -34,10 +40,12 @@ calculate_nbinom_density <- function(size, prob, lower_quantile) {
 #' @param size The size parameter of a negative binomial distribution
 #' @param prob The prob parameter of a negative binomial distribution
 #' @param lower_quantile Coverage of quantile of a distribution
+#' @param step The step of vector of quantiles
 #' @return A drawable object to pass to plot()
 #' @importFrom rlang .data
-draw_nbinom_density <- function(size, prob, lower_quantile) {
-  df <- calculate_nbinom_density(size, prob, lower_quantile)
+draw_nbinom_density <- function(size, prob, lower_quantile, step) {
+  df <- calculate_nbinom_density(size = size, prob = prob,
+                                 lower_quantile = lower_quantile, step = step)
   g <- ggplot2::ggplot(df)
   g <- g + ggplot2::geom_line(ggplot2::aes(x = .data$x, y = .data$density))
   g
@@ -48,10 +56,12 @@ draw_nbinom_density <- function(size, prob, lower_quantile) {
 #' @param size The size parameter of a negative binomial distribution
 #' @param prob The prob parameter of a negative binomial distribution
 #' @param lower_quantile Coverage of quantile of a distribution
+#' @param step The step of vector of quantiles
 #' @return A data frame of the densities of the negative binomial distribution
-get_nbinom_density_dataframe <- function(size, prob, lower_quantile) {
+get_nbinom_density_dataframe <- function(size, prob, lower_quantile, step) {
   ## Share with draw_nbinom_density()
-  calculate_nbinom_density(size, prob, lower_quantile)
+  calculate_nbinom_density(size = size, prob = prob,
+                           lower_quantile = lower_quantile, step = step)
 }
 
 #' Get the default size parameter of negative binomial distributions
@@ -146,7 +156,8 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #' @param lower_quantile Coverage of quantile of this distribution
     #' @return A drawable object to pass to plot()
     draw = function(lower_quantile) {
-      draw_nbinom_density(private$size, private$prob, lower_quantile = lower_quantile)
+      draw_nbinom_density(private$size, private$prob,
+                          lower_quantile = lower_quantile, step = private$step)
     },
 
     #' @description Get a data frame to plot
@@ -154,7 +165,8 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #' @param lower_quantile Coverage of quantile of this distribution
     #' @return A data frame to plot
     get_dataframe = function(lower_quantile) {
-      get_nbinom_density_dataframe(private$size, private$prob, lower_quantile = lower_quantile)
+      get_nbinom_density_dataframe(private$size, private$prob,
+                                   lower_quantile = lower_quantile, step = private$step)
     }
   ),
   private = list(
@@ -169,6 +181,9 @@ NbinomDist <- R6::R6Class("NbinomDist",
 
     # The prob parameter of this negative binomial distribution
     prob = NA,
+
+    # A step of xs
+    step = 1.0,
 
     # Check if a size is valid
     is_valid_size = function(x) {
