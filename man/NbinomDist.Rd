@@ -28,7 +28,7 @@ A negative binomial distribution has size and prob parameters.
 \subsection{Method \code{new()}}{
 Initialize and set default parameters
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NbinomDist$new(size, prob)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NbinomDist$new(size, prob, tick_per_one)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -37,6 +37,8 @@ Initialize and set default parameters
 \item{\code{size}}{The size parameter which must be a positive number}
 
 \item{\code{prob}}{The prob parameter which must be positive and lower than 1.0}
+
+\item{\code{tick_per_one}}{The inverted minimum width of x ticks}
 }
 \if{html}{\out{</div>}}
 }

@@ -78,6 +78,13 @@ get_default_nbinom_prob <- function() {
   0.5
 }
 
+#' Get the default step of vector of quantiles
+#'
+#' @return The default step of vector of quantiles
+get_default_step <- function() {
+  1.0
+}
+
 #' R6 Class representing a negative binomial distribution
 #'
 #' @description A negative binomial distribution has size and prob parameters.
@@ -87,13 +94,17 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #'
     #' @param size The size parameter which must be a positive number
     #' @param prob The prob parameter which must be positive and lower than 1.0
-    initialize = function(size, prob) {
+    #' @param tick_per_one The inverted minimum width of x ticks
+    initialize = function(size, prob, tick_per_one) {
       initial_size <- ifelse(private$is_valid_size(size), size, get_default_nbinom_size())
       initial_prob <- ifelse(private$is_valid_prob(prob), prob, get_default_nbinom_prob())
+      step <- ifelse(private$is_valid_tick_per_one(tick_per_one),
+                     1.0 / tick_per_one, get_default_step())
       private$initial_size <- initial_size
       private$initial_prob <- initial_prob
       private$size <- initial_size
       private$prob <- initial_prob
+      private$step <- step
     },
 
     #' @description Set the size parameter of this negative binomial distribution
@@ -193,6 +204,11 @@ NbinomDist <- R6::R6Class("NbinomDist",
     # Check if a prob is valid
     is_valid_prob = function(x) {
       is_numeric(x) && ((x > 0) & (x < 1.0))
+    },
+
+    # Check if a tick_per_one is valid
+    is_valid_tick_per_one = function(x) {
+      is_numeric(x) && (x > 0)
     }
   )
 )
@@ -203,6 +219,7 @@ NbinomDist <- R6::R6Class("NbinomDist",
 read_config_parameters <- function() {
   size_initial <- as.numeric(get_golem_config("initial_size"))
   prob_initial <- as.numeric(get_golem_config("initial_prob"))
+  tick_per_one <- as.numeric(get_golem_config("tick_per_one"))
   default_max_nbinom_size <- as.numeric(get_golem_config("default_max_nbinom_size"))
 
   stopifnot(is_numeric(size_initial))
@@ -212,6 +229,6 @@ read_config_parameters <- function() {
 
   list(
     size_initial = size_initial, prob_initial = prob_initial,
-    default_max_nbinom_size = default_max_nbinom_size
+    tick_per_one = tick_per_one, default_max_nbinom_size = default_max_nbinom_size
   )
 }

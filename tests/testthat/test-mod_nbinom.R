@@ -6,7 +6,7 @@ test_that("mod_nbinom_ui", {
 
 test_that("mod_nbinom_server", {
   testServer(mod_nbinom_server, args = list(
-    nbinom_dist = NbinomDist$new(size = 4.0, prob = 0.25),
+    nbinom_dist = NbinomDist$new(size = 4.0, prob = 0.25, tick_per_one = 1.0),
     default_max_nbinom_size = 10
   ), {
     gargoyle::init("render_plot")

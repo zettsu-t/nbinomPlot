@@ -27,9 +27,10 @@ test_that("calculate_nbinom_density_fine", {
   expected <- c(0.31640625, 0.34606934, 0.31640625, 0.25955200, 0.19775391, 0.14275360,
                 0.09887695, 0.06627846, 0.04325867, 0.02761602, 0.01730347)
 
-  df_actual <- calculate_nbinom_density(size = 4, prob = 0.75, lower_quantile = 0.99, step = 0.5)
+  step <- 0.5
+  df_actual <- calculate_nbinom_density(size = 4, prob = 0.75, lower_quantile = 0.99, step = step)
   expect_equal(object = NROW(df_actual), expected = NROW(expected))
-  expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
+  expect_equal(object = df_actual$x, expected = (0:(NROW(expected) - 1)) * step)
   expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
 })
 
@@ -50,10 +51,11 @@ test_that("get_nbinom_density_dataframe_fine", {
   expected <- c(0.272490525, 0.336014682, 0.281860722, 0.189832909, 0.110358663,
                 0.057630336, 0.027713955, 0.012480333, 0.005326185, 0.002173254)
 
+  step <- 0.75
   df_actual <- get_nbinom_density_dataframe(size = 8, prob = 0.85,
-                                            lower_quantile = 0.999, step = 0.75)
+                                            lower_quantile = 0.999, step = step)
   expect_equal(object = NROW(df_actual), expected = NROW(expected))
-  expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
+  expect_equal(object = df_actual$x, expected = (0:(NROW(expected) - 1)) * step)
   expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
 })
 
@@ -61,8 +63,9 @@ test_that("Initialize NbinomDist and reset", {
   tolerance <- 1e-7
   size_initial <- 4.0
   prob_initial <- 0.25
+  tick_per_one <- 1.0
 
-  nb_dist <- NbinomDist$new(size_initial, prob_initial)
+  nb_dist <- NbinomDist$new(size_initial, prob_initial, tick_per_one)
   expect_equal(object = nb_dist$get_size(), expected = size_initial, tolerance = tolerance)
   expect_equal(object = nb_dist$get_prob(), expected = prob_initial, tolerance = tolerance)
 
@@ -81,7 +84,7 @@ test_that("Initialize NbinomDist with wrong parameters", {
   size_initial <- get_default_nbinom_size()
   prob_initial <- get_default_nbinom_prob()
 
-  nb_dist <- NbinomDist$new(NA, NA)
+  nb_dist <- NbinomDist$new(NA, NA, NA)
   expect_equal(object = nb_dist$get_size(), expected = size_initial, tolerance = tolerance)
   expect_equal(object = nb_dist$get_prob(), expected = prob_initial, tolerance = tolerance)
 })
@@ -91,8 +94,9 @@ test_that("NbinomDist set and update the size parameter", {
   size_initial <- 1.0
   prob_initial <- 0.5
   mu_initial <- 1.0
+  tick_per_one <- 1.0
 
-  nb_dist <- NbinomDist$new(size_initial, prob_initial)
+  nb_dist <- NbinomDist$new(size_initial, prob_initial, tick_per_one)
   expect_equal(object = nb_dist$get_size(), expected = size_initial, tolerance = tolerance)
   expect_equal(object = nb_dist$get_prob(), expected = prob_initial, tolerance = tolerance)
   expect_equal(object = nb_dist$get_mu(), expected = mu_initial, tolerance = tolerance)
@@ -115,8 +119,9 @@ test_that("NbinomDist set and update the mu parameter", {
   size_initial <- 1.0
   prob_initial <- 0.5
   mu_initial <- 1.0
+  tick_per_one <- 1.0
 
-  nb_dist <- NbinomDist$new(size_initial, prob_initial)
+  nb_dist <- NbinomDist$new(size_initial, prob_initial, tick_per_one)
   prob_updated <- 0.75
   mu_updated <- 2.0
   size_updated <- 6.0
@@ -137,8 +142,9 @@ test_that("NbinomDist set invalid values", {
   size_updated <- 4.0
   prob_updated <- 0.25
   mu_updated <- 12.0
+  tick_per_one <- 1.0
 
-  nb_dist <- NbinomDist$new(size_initial, prob_initial)
+  nb_dist <- NbinomDist$new(size_initial, prob_initial, tick_per_one)
   nb_dist$set_size(size = size_updated)
   nb_dist$set_prob(prob = prob_updated)
   purrr::map(list(-1, 0, NA, NULL, TRUE, "abc"), function(x) {
@@ -167,7 +173,8 @@ test_that("NbinomDist reset and update the size parameter", {
   tolerance <- 1e-7
   size_initial <- 6.0
   prob_initial <- 0.75
-  nb_dist <- NbinomDist$new(size_initial, prob_initial)
+  tick_per_one <- 1.0
+  nb_dist <- NbinomDist$new(size_initial, prob_initial, tick_per_one)
   mu_initial <- nb_dist$get_mu()
 
   size_updated <- size_initial * 2
@@ -200,19 +207,29 @@ test_that("draw_nbinom_density", {
                                       lower_quantile = 0.999, step = 1.0), "gg")
 })
 
-test_that("get_density_dataframe", {
+test_that("get_density_dataframe_step", {
   tolerance <- 1e-7
   size_initial <- 4
   prob_initial <- 0.75
   lower_quantile <- 0.99
-  nb_dist <- NbinomDist$new(size_initial, prob_initial)
-
-  df_actual <- nb_dist$get_dataframe(lower_quantile)
+  tick_per_one <- 1.0
   expected <- c(0.31640625, 0.31640625, 0.19775391, 0.09887695, 0.04325867, 0.01730347)
+
+  nb_dist <- NbinomDist$new(size_initial, prob_initial, tick_per_one)
+  df_actual <- nb_dist$get_dataframe(lower_quantile)
 
   expect_equal(object = NROW(df_actual), expected = NROW(expected))
   expect_equal(object = df_actual$x, expected = 0:(NROW(expected) - 1))
   expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
+
+  expect_true(all(purrr::map_lgl(seq_len(4), function(x) {
+    tick_per_one <- 2 ** x
+    nb_dist <- NbinomDist$new(size_initial, prob_initial, tick_per_one)
+    n_actual <- NROW(nb_dist$get_dataframe(lower_quantile))
+    n_expected <- (NROW(expected) - 1) * tick_per_one + 1
+    expect_equal(object = n_actual, expected = n_expected)
+    n_actual == n_expected
+  })))
 })
 
 test_that("read_config_parameters", {
@@ -220,6 +237,11 @@ test_that("read_config_parameters", {
   expect_true(is.list(config))
   expect_false(is.null(config$size_initial))
   expect_false(is.null(config$prob_initial))
+  expect_false(is.null(config$tick_per_one))
+  expect_false(is.null(config$default_max_nbinom_size))
+
   expect_true(is.numeric(config$size_initial))
   expect_true(is.numeric(config$prob_initial))
+  expect_true(is.numeric(config$tick_per_one))
+  expect_true(is.numeric(config$default_max_nbinom_size))
 })

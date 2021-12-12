@@ -14,6 +14,7 @@ RUN Rscript -e 'remotes::install_version("glue",upgrade="never", version = "1.4.
 RUN Rscript -e 'remotes::install_version("R6",upgrade="never", version = "2.5.0")'
 RUN Rscript -e 'remotes::install_version("Rcpp",upgrade="never", version = "1.0.7")'
 RUN Rscript -e 'remotes::install_version("purrr",upgrade="never", version = "0.3.4")'
+RUN Rscript -e 'remotes::install_version("dplyr",upgrade="never", version = "1.0.7")'
 RUN Rscript -e 'remotes::install_version("stringr",upgrade="never", version = "1.4.0")'
 RUN Rscript -e 'remotes::install_version("knitr",upgrade="never", version = "1.33")'
 RUN Rscript -e 'remotes::install_version("curl",upgrade="never", version = "4.3.2")'
@@ -29,7 +30,7 @@ RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.6
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.18")'
 RUN Rscript -e 'remotes::install_version("config",upgrade="never", version = "0.3.1")'
 RUN Rscript -e 'remotes::install_version("spelling",upgrade="never", version = "2.2")'
-RUN Rscript -e 'remotes::install_version("magick",upgrade="never", version = "NA")'
+RUN Rscript -e 'remotes::install_version("magick",upgrade="never", version = "2.7.3")'
 RUN Rscript -e 'remotes::install_version("BH",upgrade="never", version = "1.75.0-0")'
 RUN Rscript -e 'remotes::install_version("thinkr",upgrade="never", version = "0.15")'
 RUN Rscript -e 'remotes::install_version("shinytest",upgrade="never", version = "1.5.0")'
@@ -41,6 +42,11 @@ RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3
 RUN Rscript -e 'remotes::install_version("globals",upgrade="never", version = "0.14.0")'
 RUN Rscript -e 'remotes::install_version("gargoyle",upgrade="never", version = "0.0.1")'
 RUN Rscript -e 'remotes::install_version("covr",upgrade="never", version = "3.5.1")'
+
+RUN wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+RUN tar xvf phantomjs-2.1.1-linux-x86_64.tar.bz2
+RUN mv phantomjs-2.1.1-linux-x86_64 /opt
+RUN ln -s /opt/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/
 
 RUN mkdir /build_zone
 ADD . /build_zone

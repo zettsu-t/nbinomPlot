@@ -17,6 +17,7 @@
 ## Add one line by package you want to add as dependency
 usethis::use_package("Rcpp")
 usethis::use_package("BH")
+usethis::use_package("dplyr")
 usethis::use_package("ggplot2")
 usethis::use_package("purrr")
 usethis::use_package("readr")
