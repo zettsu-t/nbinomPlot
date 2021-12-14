@@ -30,8 +30,10 @@ calculate_nbinom_density <- function(size, prob, lower_quantile, step) {
     ys <- stats::dnbinom(xs, size = size, prob = prob)
     tibble::tibble(x = xs, density = ys)
   } else {
-    calculate_nbinom_density_cpp(size = size, prob = prob,
-                                 lower_quantile = lower_quantile, step = step)
+    calculate_nbinom_density_cpp(
+      size = size, prob = prob,
+      lower_quantile = lower_quantile, step = step
+    )
   }
 }
 
@@ -44,8 +46,10 @@ calculate_nbinom_density <- function(size, prob, lower_quantile, step) {
 #' @return A drawable object to pass to plot()
 #' @importFrom rlang .data
 draw_nbinom_density <- function(size, prob, lower_quantile, step) {
-  df <- calculate_nbinom_density(size = size, prob = prob,
-                                 lower_quantile = lower_quantile, step = step)
+  df <- calculate_nbinom_density(
+    size = size, prob = prob,
+    lower_quantile = lower_quantile, step = step
+  )
   g <- ggplot2::ggplot(df)
   g <- g + ggplot2::geom_line(ggplot2::aes(x = .data$x, y = .data$density))
   g
@@ -60,8 +64,10 @@ draw_nbinom_density <- function(size, prob, lower_quantile, step) {
 #' @return A data frame of the densities of the negative binomial distribution
 get_nbinom_density_dataframe <- function(size, prob, lower_quantile, step) {
   ## Share with draw_nbinom_density()
-  calculate_nbinom_density(size = size, prob = prob,
-                           lower_quantile = lower_quantile, step = step)
+  calculate_nbinom_density(
+    size = size, prob = prob,
+    lower_quantile = lower_quantile, step = step
+  )
 }
 
 #' Get the default size parameter of negative binomial distributions
@@ -99,7 +105,8 @@ NbinomDist <- R6::R6Class("NbinomDist",
       initial_size <- ifelse(private$is_valid_size(size), size, get_default_nbinom_size())
       initial_prob <- ifelse(private$is_valid_prob(prob), prob, get_default_nbinom_prob())
       step <- ifelse(private$is_valid_tick_per_one(tick_per_one),
-                     1.0 / tick_per_one, get_default_step())
+        1.0 / tick_per_one, get_default_step()
+      )
       private$initial_size <- initial_size
       private$initial_prob <- initial_prob
       private$size <- initial_size
@@ -168,7 +175,8 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #' @return A drawable object to pass to plot()
     draw = function(lower_quantile) {
       draw_nbinom_density(private$size, private$prob,
-                          lower_quantile = lower_quantile, step = private$step)
+        lower_quantile = lower_quantile, step = private$step
+      )
     },
 
     #' @description Get a data frame to plot
@@ -177,7 +185,8 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #' @return A data frame to plot
     get_dataframe = function(lower_quantile) {
       get_nbinom_density_dataframe(private$size, private$prob,
-                                   lower_quantile = lower_quantile, step = private$step)
+        lower_quantile = lower_quantile, step = private$step
+      )
     }
   ),
   private = list(

@@ -6,6 +6,10 @@ default:
   initial_prob: 0.25
   tick_per_one: 16
   default_max_nbinom_size: 20
+test_r_nbinom:
+  tick_per_one: 1
+test_cpp_nbinom:
+  tick_per_one: 2
 production:
   app_prod: yes
 dev:

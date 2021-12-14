@@ -1,3 +1,4 @@
+// [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
 #include <boost/math/distributions/negative_binomial.hpp>
 

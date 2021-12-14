@@ -11,7 +11,6 @@ mod_nbinom_ui <- function(id) {
   shiny::fluidPage(
     shinyjs::useShinyjs(),
     shiny::titlePanel("Negative Binomial Distribution"),
-    tags$style(".container-fluid {background-color: #f0ffff;}"),
     shiny::sidebarLayout(
       mod_params_ui(id),
       shiny::mainPanel(mod_main_panel_ui(id))
