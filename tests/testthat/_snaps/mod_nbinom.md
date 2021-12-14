@@ -5,7 +5,6 @@
     Output
       <div class="container-fluid">
         <h2>Negative Binomial Distribution</h2>
-        <style>.container-fluid {background-color: #f0ffff;}</style>
         <div class="row">
           <div class="col-sm-4">
             <form class="well" role="complementary">
