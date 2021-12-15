@@ -33,9 +33,12 @@ jobs:
         with:
           r-version: 3.6.3
 
-      - name: Install dependencies
+      - name: Install R package dependencies
         run: |
           sudo apt-get install -y git-core imagemagick libboost-dev libcairo2-dev libcurl4-openssl-dev libgit2-dev libicu-dev libmagic-dev libmagick++-dev libpng-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc qpdf zlib1g-dev
+
+      - name: Install dependencies
+        run: |
           install.packages(c("remotes", "rcmdcheck"))
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
