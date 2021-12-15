@@ -258,3 +258,16 @@ test_that("AppCpp", {
 
   app$stop()
 })
+
+test_that("AppCppDefault", {
+  skip_if_not(interactive())
+  app <- shinytest::ShinyDriver$new(run_app())
+  app$waitForShiny()
+  app$click(NS("nbplot", "update"))
+  app$waitForShiny()
+
+  path_initital_screen <- tempfile()
+  app$takeScreenshot(path_initital_screen)
+  expect_snapshot_file(path_initital_screen, "screenshots/initital_screen_cpp_default.png")
+  app$stop()
+})

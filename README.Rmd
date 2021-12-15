@@ -39,6 +39,17 @@ library(nbinomPlot)
 run_app()
 ```
 
+## Testing
+
+This is an example to test this app.
+
+```{r testing, echo = TRUE, eval = FALSE}
+library(devtools)
+Sys.setlocale("LC_MESSAGES", 'en_US.UTF-8')
+Sys.setenv(LANG = 'en_US.UTF-8')
+devtools::test()
+```
+
 ## Run on Shiny Server
 
 Build and run a Docker container with **Dockerfile_shiny**
@@ -48,4 +59,4 @@ docker build -f Dockerfile_shiny -t nbinom .
 docker run -t nbinom
 ```
 
-and you can access the nbinomPlot app at [http://example.com:3838/nbinomPlot](http://example.com:3838/nbinomPlot). Note that you have to replace the URL with an actual server.
+and launch **shiny-server** in the container, and you can access the nbinomPlot app at [http://example.com:3838/nbinomPlot](http://example.com:3838/nbinomPlot). Note that you have to replace the URL with an actual server.
