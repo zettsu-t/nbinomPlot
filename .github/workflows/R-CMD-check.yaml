@@ -15,7 +15,7 @@ name: R-CMD-check
 
 jobs:
   R-CMD-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -26,6 +26,7 @@ jobs:
         id: install-boost
         with:
           boost_version: 1.73.0
+          platform_version: 20.04
 
       - uses: r-lib/actions/setup-pandoc@v1
       - uses: r-lib/actions/setup-r@v1
@@ -34,6 +35,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt-get install -y git-core imagemagick libboost-dev libcairo2-dev libcurl4-openssl-dev libgit2-dev libicu-dev libmagic-dev libmagick++-dev libpng-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc qpdf zlib1g-dev
           install.packages(c("remotes", "rcmdcheck"))
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
