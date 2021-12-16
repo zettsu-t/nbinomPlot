@@ -44,13 +44,11 @@ jobs:
         shell: Rscript {0}
 
       - name: Install this package
-        continue-on-error: true
         run: |
           R CMD build .
           R CMD INSTALL nbinomPlot_0.0.0.9000.tar.gz
           R CMD check --no-manual --no-tests nbinomPlot_0.0.0.9000.tar.gz
 
       - name: Testing
-        continue-on-error: true
         run: |
           Rscript -e 'library(devtools); devtools::test(); Sys.setlocale("LC_MESSAGES", "en_US.UTF-8"); Sys.setlocale("LC_COLLATE", "en_US.UTF-8"); Sys.setenv(LANG = "en_US.UTF-8"); devtools::test()'
