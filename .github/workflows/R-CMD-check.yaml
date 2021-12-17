@@ -21,31 +21,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-pandoc@v1
-
       - uses: r-lib/actions/setup-r@v1
         with:
           r-version: 3.6.3
 
-      - name: Get R and OS version
-        id: get-version
+      - name: Install R package dependencies
         run: |
-          cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
-          cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
+          sudo apt-get install -y git-core imagemagick libboost-dev libcairo2-dev libcurl4-openssl-dev libgit2-dev libicu-dev libmagic-dev libmagick++-dev libpng-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc qpdf zlib1g-dev
+
+      - name: Install dependencies
+        run: |
+          install.packages(c("remotes", "rcmdcheck"))
+          remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
-
-      - name: Restore a package cache
-        id: cache-r-packages
-        uses: actions/cache@v2
-        with:
-          path: .
-          key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('Dockerfile') }}
-          restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
-
-      - name: Install R and OS packages
-        shell: bash
-        if: steps.cache-r-packages.outputs.cache-hit != 'true'
-        run: |
-          .github/setup.sh
 
       - name: Install this package
         run: |
