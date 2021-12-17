@@ -20,28 +20,43 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
-
-      - name: Install boost
-        uses: MarkusJx/install-boost@v2.0.0
-        id: install-boost
-        with:
-          boost_version: 1.73.0
-          platform_version: 20.04
-
       - uses: r-lib/actions/setup-pandoc@v1
+
       - uses: r-lib/actions/setup-r@v1
         with:
           r-version: 3.6.3
 
-      - name: Install R package dependencies
+      - name: Set RENV_PATHS_ROOT
+        shell: bash
         run: |
-          sudo apt-get install -y git-core imagemagick libboost-dev libcairo2-dev libcurl4-openssl-dev libgit2-dev libicu-dev libmagic-dev libmagick++-dev libpng-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc qpdf zlib1g-dev
+          echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
 
-      - name: Install dependencies
+      - name: Install and activate renv
         run: |
-          install.packages(c("remotes", "rcmdcheck"))
-          remotes::install_deps(dependencies = TRUE)
+          install.packages("renv")
+          renv::activate()
         shell: Rscript {0}
+
+      - name: Get R and OS version
+        id: get-version
+        run: |
+          cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
+          cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
+        shell: Rscript {0}
+
+      - name: Restore Renv package cache
+        id: cache-r-packages
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.RENV_PATHS_ROOT }}
+          key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
+          restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
+
+      - name: Install R and OS packages
+        shell: bash
+        if: steps.cache-r-packages.outputs.cache-hit != 'true'
+        run: |
+          /.github/setup.sh
 
       - name: Install this package
         run: |
