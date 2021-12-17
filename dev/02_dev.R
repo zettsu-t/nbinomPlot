@@ -15,6 +15,9 @@
 
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
+usethis::use_package("Rcpp")
+usethis::use_package("BH")
+usethis::use_package("dplyr")
 usethis::use_package("ggplot2")
 usethis::use_package("purrr")
 usethis::use_package("readr")
@@ -53,6 +56,7 @@ golem::add_module(name = "reset") # Name of the module
 ## Add helper functions ----
 ## Creates fct_* and utils_*
 golem::add_fct("nbinom")
+golem::add_fct("cpp_nbinom")
 golem::add_utils("helpers")
 
 
@@ -70,6 +74,7 @@ usethis::use_data_raw(name = "my_dataset", open = FALSE)
 ## Add one line by test you want to create
 usethis::use_test("app_config")
 usethis::use_test("fct_nbinom")
+usethis::use_test("fct_cpp_nbinom")
 usethis::use_test("utils_helpers")
 usethis::use_test("app")
 usethis::use_test("mod_nbinom")
@@ -83,6 +88,8 @@ usethis::use_test("mod_quantile_var")
 usethis::use_test("mod_update")
 usethis::use_test("mod_reset")
 
+# Use C++ code
+usethis::use_rcpp()
 
 # Documentation
 

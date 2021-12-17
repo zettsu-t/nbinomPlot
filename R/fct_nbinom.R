@@ -21,12 +21,20 @@ calculate_nbinom_size_from_prob_mu <- function(prob, mu) {
 #' @param size The size parameter of a negative binomial distribution
 #' @param prob The prob parameter of a negative binomial distribution
 #' @param lower_quantile Coverage of quantile of a distribution
+#' @param step The step of vector of quantiles
 #' @return A data frame of the densities of the negative binomial distribution
-calculate_nbinom_density <- function(size, prob, lower_quantile) {
-  limit <- stats::qnbinom(lower_quantile, size, prob)
-  xs <- seq(from = 0, to = limit, by = 1)
-  ys <- stats::dnbinom(xs, size = size, prob = prob)
-  tibble::tibble(x = xs, density = ys)
+calculate_nbinom_density <- function(size, prob, lower_quantile, step) {
+  if (step == 1.0) {
+    limit <- stats::qnbinom(lower_quantile, size, prob)
+    xs <- seq(from = 0, to = limit, by = 1)
+    ys <- stats::dnbinom(xs, size = size, prob = prob)
+    tibble::tibble(x = xs, density = ys)
+  } else {
+    calculate_nbinom_density_cpp(
+      size = size, prob = prob,
+      lower_quantile = lower_quantile, step = step
+    )
+  }
 }
 
 #' Draw a density plot of a negative binomial distribution
@@ -34,10 +42,14 @@ calculate_nbinom_density <- function(size, prob, lower_quantile) {
 #' @param size The size parameter of a negative binomial distribution
 #' @param prob The prob parameter of a negative binomial distribution
 #' @param lower_quantile Coverage of quantile of a distribution
+#' @param step The step of vector of quantiles
 #' @return A drawable object to pass to plot()
 #' @importFrom rlang .data
-draw_nbinom_density <- function(size, prob, lower_quantile) {
-  df <- calculate_nbinom_density(size, prob, lower_quantile)
+draw_nbinom_density <- function(size, prob, lower_quantile, step) {
+  df <- calculate_nbinom_density(
+    size = size, prob = prob,
+    lower_quantile = lower_quantile, step = step
+  )
   g <- ggplot2::ggplot(df)
   g <- g + ggplot2::geom_line(ggplot2::aes(x = .data$x, y = .data$density))
   g
@@ -48,10 +60,14 @@ draw_nbinom_density <- function(size, prob, lower_quantile) {
 #' @param size The size parameter of a negative binomial distribution
 #' @param prob The prob parameter of a negative binomial distribution
 #' @param lower_quantile Coverage of quantile of a distribution
+#' @param step The step of vector of quantiles
 #' @return A data frame of the densities of the negative binomial distribution
-get_nbinom_density_dataframe <- function(size, prob, lower_quantile) {
+get_nbinom_density_dataframe <- function(size, prob, lower_quantile, step) {
   ## Share with draw_nbinom_density()
-  calculate_nbinom_density(size, prob, lower_quantile)
+  calculate_nbinom_density(
+    size = size, prob = prob,
+    lower_quantile = lower_quantile, step = step
+  )
 }
 
 #' Get the default size parameter of negative binomial distributions
@@ -68,6 +84,13 @@ get_default_nbinom_prob <- function() {
   0.5
 }
 
+#' Get the default step of vector of quantiles
+#'
+#' @return The default step of vector of quantiles
+get_default_step <- function() {
+  1.0
+}
+
 #' R6 Class representing a negative binomial distribution
 #'
 #' @description A negative binomial distribution has size and prob parameters.
@@ -77,13 +100,18 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #'
     #' @param size The size parameter which must be a positive number
     #' @param prob The prob parameter which must be positive and lower than 1.0
-    initialize = function(size, prob) {
+    #' @param tick_per_one The inverted minimum width of x ticks
+    initialize = function(size, prob, tick_per_one) {
       initial_size <- ifelse(private$is_valid_size(size), size, get_default_nbinom_size())
       initial_prob <- ifelse(private$is_valid_prob(prob), prob, get_default_nbinom_prob())
+      step <- ifelse(private$is_valid_tick_per_one(tick_per_one),
+        1.0 / tick_per_one, get_default_step()
+      )
       private$initial_size <- initial_size
       private$initial_prob <- initial_prob
       private$size <- initial_size
       private$prob <- initial_prob
+      private$step <- step
     },
 
     #' @description Set the size parameter of this negative binomial distribution
@@ -146,7 +174,9 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #' @param lower_quantile Coverage of quantile of this distribution
     #' @return A drawable object to pass to plot()
     draw = function(lower_quantile) {
-      draw_nbinom_density(private$size, private$prob, lower_quantile = lower_quantile)
+      draw_nbinom_density(private$size, private$prob,
+        lower_quantile = lower_quantile, step = private$step
+      )
     },
 
     #' @description Get a data frame to plot
@@ -154,7 +184,9 @@ NbinomDist <- R6::R6Class("NbinomDist",
     #' @param lower_quantile Coverage of quantile of this distribution
     #' @return A data frame to plot
     get_dataframe = function(lower_quantile) {
-      get_nbinom_density_dataframe(private$size, private$prob, lower_quantile = lower_quantile)
+      get_nbinom_density_dataframe(private$size, private$prob,
+        lower_quantile = lower_quantile, step = private$step
+      )
     }
   ),
   private = list(
@@ -170,6 +202,9 @@ NbinomDist <- R6::R6Class("NbinomDist",
     # The prob parameter of this negative binomial distribution
     prob = NA,
 
+    # A step of xs
+    step = 1.0,
+
     # Check if a size is valid
     is_valid_size = function(x) {
       is_numeric(x) && (x > 0)
@@ -178,6 +213,11 @@ NbinomDist <- R6::R6Class("NbinomDist",
     # Check if a prob is valid
     is_valid_prob = function(x) {
       is_numeric(x) && ((x > 0) & (x < 1.0))
+    },
+
+    # Check if a tick_per_one is valid
+    is_valid_tick_per_one = function(x) {
+      is_numeric(x) && (x > 0)
     }
   )
 )
@@ -188,6 +228,7 @@ NbinomDist <- R6::R6Class("NbinomDist",
 read_config_parameters <- function() {
   size_initial <- as.numeric(get_golem_config("initial_size"))
   prob_initial <- as.numeric(get_golem_config("initial_prob"))
+  tick_per_one <- as.numeric(get_golem_config("tick_per_one"))
   default_max_nbinom_size <- as.numeric(get_golem_config("default_max_nbinom_size"))
 
   stopifnot(is_numeric(size_initial))
@@ -197,6 +238,6 @@ read_config_parameters <- function() {
 
   list(
     size_initial = size_initial, prob_initial = prob_initial,
-    default_max_nbinom_size = default_max_nbinom_size
+    tick_per_one = tick_per_one, default_max_nbinom_size = default_max_nbinom_size
   )
 }

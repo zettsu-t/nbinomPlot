@@ -4,6 +4,7 @@ Version: 0.0.0.9000
 Authors@R: person('Zettsu', 'Tatsuya', email = 'zettsu.tatsuya@gmail.com', role = c('cre', 'aut'))
 Description: This is a Shiny app developed with the golem package to plot negative binomial distributions interactively.
 License: MIT + file LICENSE
+LinkingTo: Rcpp
 Imports:
     attempt,
     config (>= 0.3.1),
@@ -18,6 +19,7 @@ Imports:
     markdown,
     processx,
     purrr,
+    Rcpp,
     R6,
     readr,
     rlang,
@@ -28,10 +30,12 @@ Imports:
     shinytest,
     stringr,
     thinkr,
-    tibble
+    tibble,
+    BH,
+    dplyr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 URL: https://github.com/zettsu-t/nbinomPlot
 BugReports: https://github.com/zettsu-t/nbinomPlot/issues
 Suggests:

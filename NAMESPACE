@@ -2,8 +2,10 @@
 
 export(run_app)
 import(shiny)
+importFrom(Rcpp,sourceCpp)
 importFrom(golem,with_golem_options)
 importFrom(rlang,.data)
 importFrom(shiny,NS)
 importFrom(shiny,shinyApp)
 importFrom(shiny,tagList)
+useDynLib(nbinomPlot, .registration=TRUE)
