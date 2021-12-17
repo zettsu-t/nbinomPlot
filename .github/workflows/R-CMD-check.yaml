@@ -56,7 +56,7 @@ jobs:
         shell: bash
         if: steps.cache-r-packages.outputs.cache-hit != 'true'
         run: |
-          /.github/setup.sh
+          .github/setup.sh
 
       - name: Install this package
         run: |
