@@ -139,9 +139,9 @@ test_that("App", {
 
 compare_downloaded_file <- function(df_actual, expected, step) {
   tolerance <- 1e-7
-  expect_equal(object = NROW(df_actual), NROW(expected))
-  expect_equal(object = df_actual$x, expected = (0:(NROW(expected) - 1)) * step)
-  expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
+  testthat::expect_equal(object = NROW(df_actual), NROW(expected))
+  testthat::expect_equal(object = df_actual$x, expected = (0:(NROW(expected) - 1)) * step)
+  testthat::expect_equal(object = df_actual$density, expected = expected, tolerance = tolerance)
 }
 
 set_and_download <- function(app, size, prob, quantile, expected, step) {

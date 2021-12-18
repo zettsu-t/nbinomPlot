@@ -6,46 +6,40 @@ Description: This is a Shiny app developed with the golem package to plot negati
 License: MIT + file LICENSE
 LinkingTo: Rcpp
 Imports:
-    attempt,
-    config (>= 0.3.1),
-    covr,
-    DT,
-    gargoyle,
-    ggplot2,
+    shiny,
+    golem,
     globals,
-    glue,
-    golem (>= 0.3.1),
-    htmltools,
-    markdown,
-    processx,
-    purrr,
+    config (>= 0.3.1),
     Rcpp,
-    R6,
-    readr,
-    rlang,
-    rmarkdown,
-    shinipsum,
-    shiny (>= 1.6.0),
-    shinyjs,
-    shinytest,
-    stringr,
-    thinkr,
-    tibble,
     BH,
-    dplyr
+    ggplot2,
+    readr,
+    tibble,
+    rlang,
+    R6,
+    gargoyle,
+    shinyjs
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 URL: https://github.com/zettsu-t/nbinomPlot
 BugReports: https://github.com/zettsu-t/nbinomPlot/issues
 Suggests:
-    magick,
-    base64enc,
-    knitr,
     spelling,
     testthat (>= 3.0.0),
+    knitr,
+    base64enc,
+    covr,
+    curl,
+    dplyr,
+    lintr,
+    magick,
     png,
-    curl
+    purrr,
+    rmarkdown,
+    shinytest,
+    stringr,
+    styler
 Config/testthat/edition: 3
 Language: en-US
 VignetteBuilder: knitr

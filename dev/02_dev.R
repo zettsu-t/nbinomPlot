@@ -17,27 +17,27 @@
 ## Add one line by package you want to add as dependency
 usethis::use_package("Rcpp")
 usethis::use_package("BH")
-usethis::use_package("dplyr")
+usethis::use_package("shiny")
+usethis::use_package("golem")
 usethis::use_package("ggplot2")
-usethis::use_package("purrr")
 usethis::use_package("readr")
-usethis::use_package("stringr")
 usethis::use_package("tibble")
-usethis::use_package("globals")
 usethis::use_package("rlang")
 usethis::use_package("R6")
 usethis::use_package("gargoyle")
-usethis::use_package("shinipsum")
 usethis::use_package("shinyjs")
-usethis::use_package("shinytest")
-usethis::use_package("thinkr")
-usethis::use_package("rmarkdown")
-usethis::use_package("markdown")
-usethis::use_package("covr")
 usethis::use_package("base64enc", "Suggests")
+usethis::use_package("covr", "Suggests")
 usethis::use_package("curl", "Suggests")
+usethis::use_package("dplyr", "Suggests")
+usethis::use_package("lintr", "Suggests")
 usethis::use_package("magick", "Suggests")
 usethis::use_package("png", "Suggests")
+usethis::use_package("purrr", "Suggests")
+usethis::use_package("rmarkdown", "Suggests")
+usethis::use_package("shinytest", "Suggests")
+usethis::use_package("stringr", "Suggests")
+usethis::use_package("styler", "Suggests")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
@@ -52,13 +52,11 @@ golem::add_module(name = "quantile_var") # Name of the module
 golem::add_module(name = "update") # Name of the module
 golem::add_module(name = "reset") # Name of the module
 
-
 ## Add helper functions ----
 ## Creates fct_* and utils_*
 golem::add_fct("nbinom")
 golem::add_fct("cpp_nbinom")
 golem::add_utils("helpers")
-
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
@@ -99,10 +97,10 @@ devtools::build_vignettes()
 
 ## Code Coverage----
 ## Set the code coverage service ("codecov" or "coveralls")
-usethis::use_coverage()
+# usethis::use_coverage()
 
 # Create a summary readme for the testthat subdirectory
-covrpage::covrpage()
+# covrpage::covrpage()
 
 ## CI ----
 ## Use this part of the script if you need to set up a CI
