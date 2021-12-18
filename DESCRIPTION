@@ -28,6 +28,7 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     knitr,
+    devtools,
     base64enc,
     covr,
     curl,
