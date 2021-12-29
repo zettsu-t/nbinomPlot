@@ -50,12 +50,17 @@ Build and run a Docker container with **Dockerfile_shiny**
 
 ``` bash
 docker build -f Dockerfile_shiny -t nbinom .
-docker run -t nbinom
+docker run -e PASSWORD=yourpassword -p 3838:3838 -p 8787:8787 -v /path/to/nbinomPlot:/home/rstudio/work -d nbinom
 ```
 
-and launch **shiny-server** in the container, and you can access the
-nbinomPlot app at <http://example.com:3838/nbinomPlot>. Note that you
-have to replace the URL with an actual server.
+and launch **shiny-server** on Terminal of an RStudio Server in the
+container, and you can access the nbinomPlot app at
+<http://example.com:3838/nbinomPlot>. Note that you have to replace the
+URL with an actual server.
+
+``` bash
+sudo shiny-server &
+```
 
 ## Format, analyze, and count code
 

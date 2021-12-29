@@ -54,10 +54,15 @@ ARG SHINY_APP_DIR=/srv/shiny-server/nbinomPlot
 ARG SHINY_APP="${SHINY_APP_DIR}/app.R"
 RUN mkdir -p "${SHINY_APP_DIR}"
 
+ARG R_USERNAME=rstudio
+ARG R_USER_GROUP_NAME="${R_USERNAME}:${R_USERNAME}"
 RUN echo "Sys.setlocale('LC_ALL','en_US.UTF-8');Sys.setenv(LANG='en_US.UTF-8');" >> /etc/R/Rprofile.site
-RUN echo "Sys.setlocale('LC_ALL','en_US.UTF-8');Sys.setenv(LANG='en_US.UTF-8');" >> /home/rstudio/.Rprofile
-RUN chown rstudio:rstudio /home/rstudio/.Rprofile
+RUN echo "Sys.setlocale('LC_ALL','en_US.UTF-8');Sys.setenv(LANG='en_US.UTF-8');" >> "/home/${R_USERNAME}/.Rprofile"
+RUN chown "${R_USER_GROUP_NAME}" "/home/${R_USERNAME}/.Rprofile"
 RUN echo "nbinomPlot::run_app()" >> "${SHINY_APP}"
+
+# Run Shiny Server by sudoers
+RUN usermod -aG sudo "${R_USERNAME}"
 
 EXPOSE 3838
 EXPOSE 8787
