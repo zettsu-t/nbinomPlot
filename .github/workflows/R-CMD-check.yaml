@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - master
-      - cpp
+      - cmake
   pull_request:
     branches:
       - main
@@ -27,7 +27,21 @@ jobs:
 
       - name: Install R package dependencies
         run: |
-          sudo apt-get install -y git-core imagemagick libboost-dev libcairo2-dev libcurl4-openssl-dev libgit2-dev libicu-dev libmagic-dev libmagick++-dev libpng-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc qpdf zlib1g-dev
+          sudo apt-get install -y cmake git-core imagemagick libboost-dev libcairo2-dev libcurl4-openssl-dev libgit2-dev libicu-dev libmagic-dev libmagick++-dev libpng-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc qpdf zlib1g-dev
+          mkdir -p ./tests/build
+
+      - name: Setup Rcpp
+        run: |
+          install.packages(c("Rcpp", "BH"))
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+
+      - name: Check cmake
+        working-directory: ./tests/build
+        run: |
+          cmake ..
+          make
+          make test
 
       - name: Install dependencies
         run: |
