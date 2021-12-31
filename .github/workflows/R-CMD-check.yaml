@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - master
-      - cpp
+      - cmake
   pull_request:
     branches:
       - main
@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_HOME: /opt/R/3.6.3/lib/R
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-pandoc@v1
@@ -27,7 +28,20 @@ jobs:
 
       - name: Install R package dependencies
         run: |
-          sudo apt-get install -y git-core imagemagick libboost-dev libcairo2-dev libcurl4-openssl-dev libgit2-dev libicu-dev libmagic-dev libmagick++-dev libpng-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc qpdf zlib1g-dev
+          sudo apt-get install -y cmake git-core imagemagick libboost-dev libcairo2-dev libcurl4-openssl-dev libgit2-dev libicu-dev libmagic-dev libmagick++-dev libpng-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc qpdf zlib1g-dev
+          mkdir -p ./tests/build
+
+      - name: Setup Rcpp
+        run: |
+          install.packages(c("Rcpp", "BH"))
+        shell: Rscript {0}
+
+      - name: Check cmake
+        working-directory: ./tests/build
+        run: |
+          cmake ..
+          make
+          make test
 
       - name: Install dependencies
         run: |
