@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(R_ROOT_DIR "$ENV{R_HOME}")
 set(rlib "R")
 find_path(R_INCLUDE_DIR R.h HINTS "${R_ROOT_DIR}" PATH_SUFFIXES include R/include)
-find_library(R_LIBRARY NAMES "${rlib}" HINTS "${R_ROOT_DIR}/lib")
+find_library(R_LIBRARY NAMES "${rlib}" HINTS "${R_ROOT_DIR}" PATH_SUFFIXES lib R/lib)
 
 file(GLOB_RECURSE RCPP_INCLUDE_DIR "${R_ROOT_DIR}/*/Rcpp.h")
 if(NOT RCPP_INCLUDE_DIR)
@@ -45,11 +45,7 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src ${CMAKE_CURRENT_BINA
 enable_testing()
 include(GoogleTest)
 
-# Include our dist.hpp
-set(BASEPATH "${CMAKE_SOURCE_DIR}")
-include_directories("${BASEPATH}")
-
-# Include our dist.hpp
+# Include our .hpp
 set(BASEPATH "${CMAKE_SOURCE_DIR}")
 include_directories("${BASEPATH}")
 

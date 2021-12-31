@@ -9,8 +9,8 @@ TEST_F(TestDist, Failed) {
         0.06152344, 0.03515625, 0.01977539, 0.01098633
     };
 
-    NumberVector size {2.0};
-    NumberVector prob {0.75};
+    const NumberVector size {2.0};
+    const NumberVector prob {0.75};
     NumberVector x_set;
     NumberType x = 0.0;
     for (const auto& i : expected){
@@ -18,8 +18,13 @@ TEST_F(TestDist, Failed) {
         x += 0.5;
     }
 
-    auto actual = get_nbinom_pdf(size, prob, x_set);
-    ASSERT_EQ(expected.size(), actual.size());
+    const auto actual = get_nbinom_pdf(size, prob, x_set);
+    auto expected_size = expected.size();
+    ASSERT_EQ(expected_size, actual.size());
+
+    for (auto i = decltype(expected_size){0}; i < expected_size; ++i) {
+        EXPECT_NEAR(expected.at(i), actual.at(i), 0.0000001);
+    }
 }
 
 int main(int argc, char *argv[]) {
