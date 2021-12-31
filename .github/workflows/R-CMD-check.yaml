@@ -33,7 +33,6 @@ jobs:
       - name: Setup Rcpp
         run: |
           install.packages(c("Rcpp", "BH"))
-          remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
 
       - name: Check cmake
