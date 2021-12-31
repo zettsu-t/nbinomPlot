@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_HOME: /opt/R/3.6.3/lib/R
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-pandoc@v1
